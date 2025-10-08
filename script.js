@@ -16,6 +16,7 @@ const generateApiKeyLink = document.getElementById('generateApiKeyLink');
 const speedToggle = document.getElementById('speedToggle');
 const userNameInput = document.getElementById('userNameInput');
 const themeSelect = document.getElementById('themeSelect');
+const cloakButton = document.getElementById('cloakButton');
 const saveSettings = document.getElementById('saveSettings');
 const chatArea = document.getElementById('chatArea');
 const chatMessages = document.getElementById('chatMessages');
@@ -26,6 +27,17 @@ const correctInviteCode = 'prysmisfromowner$';
 let currentSettingsPage = 'ai';
 let userName = 'User';
 let aiThinkingSpeed = true;
+let geminiApiKey = '';
+
+const commands = {
+'/help': 'Show all available commands',
+'/clear': 'Clear chat history',
+'/theme': 'Toggle between dark/light mode',
+'/name': 'Change your display name',
+'/code': 'Get coding assistance',
+'/math': 'Get math homework help',
+'/research': 'Research assistance'
+};
 
 function validateInviteCode(code) {
 return code === correctInviteCode;
@@ -36,7 +48,7 @@ errorMessage.textContent = message;
 errorMessage.classList.add('show');
 setTimeout(() => {
 errorMessage.classList.remove('show');
-}, 3000);
+}, 4000);
 }
 
 function showChatArea() {
@@ -47,10 +59,9 @@ setTimeout(() => {
 authBox.style.display = 'none';
 chatArea.style.display = 'block';
 setTimeout(() => {
-chatArea.style.opacity = '1';
-chatArea.style.transform = 'translateY(0)';
-addAIMessage("hello user! Press the '⚙️' and enter your Gemini api key to get started.");
-}, 50);
+chatArea.classList.add('active');
+addAIMessage("Hello! I'm Prysmis AI, your advanced assistant. Type `/help` to see available commands or ask me anything! 🚀");
+}, 300);
 }, 500);
 }
 
@@ -95,6 +106,25 @@ currentSettingsPage = 'ai';
 }
 }
 
+function cloakWebsite() {
+const currentUrl = window.location.href;
+if (currentUrl === 'about:blank') return "Already in an invisible tab.";
+
+const newWindow = window.open('about:blank', '_blank');
+if (!newWindow) {
+showNotification("Could not open new tab. Please disable your pop-up blocker.", "error");
+return;
+}
+
+const customHTML = `<!DOCTYPE html><html><head><title>Google</title><link rel="icon" type="image/x-icon" href="https://www.google.com/favicon.ico"><style>body, html { margin: 0; padding: 0; overflow: hidden; height: 100%; width: 100%; background-color: #000; } iframe { width: 100%; height: 100%; border: none; }</style></head><body><iframe src="about:blank"></iframe></body></html>`;
+
+newWindow.document.write(customHTML);
+newWindow.document.close();
+window.location.replace("about:blank");
+
+showNotification("Website cloaked successfully! Current tab is now invisible.", "success");
+}
+
 function saveUserSettings() {
 userName = userNameInput.value.trim() || 'User';
 const theme = themeSelect.value;
@@ -106,14 +136,15 @@ document.body.classList.remove('light-mode');
 }
 
 aiThinkingSpeed = speedToggle.checked;
+geminiApiKey = apiKeyInput.value.trim();
 
-showNotification('Settings saved successfully!');
+showNotification('Settings saved successfully!', 'success');
 toggleSettings();
 }
 
-function showNotification(message) {
+function showNotification(message, type = 'success') {
 const notification = document.createElement('div');
-notification.className = 'notification';
+notification.className = `notification ${type}`;
 notification.textContent = message;
 document.body.appendChild(notification);
 
@@ -126,7 +157,7 @@ notification.classList.remove('show');
 setTimeout(() => {
 document.body.removeChild(notification);
 }, 300);
-}, 3000);
+}, 4000);
 }
 
 function addAIMessage(text) {
@@ -136,33 +167,58 @@ messageDiv.className = 'message ai-message';
 const thinkingDiv = document.createElement('div');
 thinkingDiv.className = 'thinking-animation';
 thinkingDiv.innerHTML = `
+<div class="thinking-glow"></div>
+<div class="thinking-dots">
 <div class="thinking-dot"></div>
 <div class="thinking-dot"></div>
 <div class="thinking-dot"></div>
-<div class="thinking-pulse"></div>
+<div class="thinking-dot"></div>
+</div>
 `;
 
 messageDiv.appendChild(thinkingDiv);
 chatMessages.appendChild(messageDiv);
 chatMessages.scrollTop = chatMessages.scrollHeight;
 
-if (aiThinkingSpeed) {
-setTimeout(() => {
-thinkingDiv.remove();
-messageDiv.innerHTML = formatMessage(text);
-chatMessages.scrollTop = chatMessages.scrollHeight;
-}, 2000);
-} else {
-thinkingDiv.remove();
-messageDiv.innerHTML = formatMessage(text);
-chatMessages.scrollTop = chatMessages.scrollHeight;
+const displayText = aiThinkingSpeed ?
+setTimeout(() => showFinalMessage(text, messageDiv), 2000 + Math.random() * 1000) :
+showFinalMessage(text, messageDiv);
 }
+
+function showFinalMessage(text, messageDiv) {
+const messageContent = document.createElement('div');
+messageContent.className = 'message-content';
+messageContent.innerHTML = formatMessage(text);
+
+const copyBtn = document.createElement('button');
+copyBtn.className = 'copy-btn';
+copyBtn.innerHTML = '📋';
+copyBtn.title = 'Copy message';
+copyBtn.onclick = () => copyToClipboard(text);
+
+messageDiv.innerHTML = '';
+messageDiv.appendChild(messageContent);
+messageDiv.appendChild(copyBtn);
+
+chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 function addUserMessage(text) {
 const messageDiv = document.createElement('div');
 messageDiv.className = 'message user-message';
-messageDiv.innerHTML = formatMessage(text);
+
+const messageContent = document.createElement('div');
+messageContent.className = 'message-content';
+messageContent.innerHTML = formatMessage(text);
+
+const copyBtn = document.createElement('button');
+copyBtn.className = 'copy-btn';
+copyBtn.innerHTML = '📋';
+copyBtn.title = 'Copy message';
+copyBtn.onclick = () => copyToClipboard(text);
+
+messageDiv.appendChild(messageContent);
+messageDiv.appendChild(copyBtn);
 chatMessages.appendChild(messageDiv);
 chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -171,28 +227,105 @@ function formatMessage(text) {
 return text
 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
 .replace(/\*(.*?)\*/g, '<em>$1</em>')
+.replace(/_(.*?)_/g, '<em>$1</em>')
+.replace(/`(.*?)`/g, '<code>$1</code>')
 .replace(/\n/g, '<br>')
 .replace(/^- (.*?)(?=\n|$)/gm, '• $1<br>')
 .replace(/^\+ (.*?)(?=\n|$)/gm, '• $1<br>');
 }
 
+function copyToClipboard(text) {
+navigator.clipboard.writeText(text).then(() => {
+showNotification('Message copied to clipboard!', 'success');
+}).catch(() => {
+showNotification('Failed to copy message', 'error');
+});
+}
+
+function handleCommand(command) {
+switch(command) {
+case '/help':
+showCommandHelp();
+break;
+case '/clear':
+chatMessages.innerHTML = '';
+addAIMessage("Chat history cleared! How can I help you?");
+break;
+case '/theme':
+const currentTheme = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+themeSelect.value = currentTheme;
+saveUserSettings();
+break;
+case '/name':
+addAIMessage("Use the settings (⚙️) to change your display name!");
+break;
+case '/code':
+addAIMessage("I'd be happy to help with coding! Please specify:\n• Programming language\n• What you're trying to achieve\n• Any specific requirements or errors");
+break;
+case '/math':
+addAIMessage("Ready for math assistance! Please provide:\n• The specific problem or equation\n• What you've tried so far\n• Any concepts you're struggling with");
+break;
+case '/research':
+addAIMessage("I can help with research! Please specify:\n• Topic or subject\n• Specific questions\n• Required depth or sources");
+break;
+default:
+addAIMessage(`Unknown command: ${command}. Type /help for available commands.`);
+}
+}
+
+function showCommandHelp() {
+let helpText = "**Available Commands:**\n\n";
+Object.entries(commands).forEach(([cmd, desc]) => {
+helpText += `**${cmd}** - ${desc}\n`;
+});
+helpText += "\n**Formatting:**\n• **bold** for bold text\n• *italic* or _italic_ for italic\n• `code` for inline code\n• - or + for lists";
+
+addAIMessage(helpText);
+}
+
 function sendMessage() {
 const message = messageInput.value.trim();
-if (message) {
+if (!message) return;
+
+if (message.startsWith('/')) {
+handleCommand(message.split(' ')[0]);
+} else {
 addUserMessage(message);
-messageInput.value = '';
 
 setTimeout(() => {
-const responses = [
-"I'm Prysmis AI! How can I assist you today?",
-"Hello! What would you like to know?",
-"Ready to help! What's on your mind?",
-"Hey there! How can I make your day better?"
-];
-const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-addAIMessage(randomResponse);
+const enhancedResponse = generateAIResponse(message);
+addAIMessage(enhancedResponse);
 }, 1000);
 }
+
+messageInput.value = '';
+messageInput.style.height = 'auto';
+}
+
+function generateAIResponse(userMessage) {
+const lowerMessage = userMessage.toLowerCase();
+
+if (lowerMessage.includes('homework') || lowerMessage.includes('math') || lowerMessage.includes('calculate')) {
+return `**Math/Homework Assistance** 🧮\n\nI can help you with that! For accurate calculations and step-by-step solutions, please provide:\n\n• The specific problem or equation\n• What you've tried so far\n• Any formulas or methods you're using\n\n*Pro tip: Use exact numbers and specify if you need conceptual explanation or just the answer.*`;
+}
+
+if (lowerMessage.includes('code') || lowerMessage.includes('programming') || lowerMessage.includes('function')) {
+return `**Coding Assistance** 💻\n\nI'd be happy to help with coding! To provide the best assistance:\n\n• Specify the programming language\n• Describe what you're trying to achieve\n• Include any error messages or requirements\n• Let me know if you need best practices or just a solution\n\n*Example: "How do I create a React component that fetches data from an API?"*`;
+}
+
+if (lowerMessage.includes('research') || lowerMessage.includes('study') || lowerMessage.includes('learn')) {
+return `**Research Assistance** 📚\n\nI can help with research and learning! Please provide:\n\n• The specific topic or subject\n• Your current understanding level\n• What you need to achieve (essay, presentation, understanding)\n• Any specific sources or perspectives needed\n\n*I can provide detailed explanations, summaries, and learning resources.*`;
+}
+
+const responses = [
+"I understand! Could you provide more details so I can give you the most accurate assistance?",
+"That's interesting! Let me help you with that. What specific aspect would you like me to focus on?",
+"Great question! I'd be happy to dive deeper into this topic with you.",
+"I appreciate you sharing that! Here's my perspective on this matter...",
+"Fascinating! Let me provide some insights that might help clarify this for you."
+];
+
+return responses[Math.floor(Math.random() * responses.length)];
 }
 
 inviteCodeInput.addEventListener('keypress', function(e) {
@@ -204,9 +337,11 @@ settingsButton.addEventListener('click', toggleSettings);
 closeSettings.addEventListener('click', toggleSettings);
 userSettingsBtn.addEventListener('click', () => switchSettingsPage('user'));
 aiSettingsBtn.addEventListener('click', () => switchSettingsPage('ai'));
-generateApiKeyLink.addEventListener('click', () => {
+generateApiKeyLink.addEventListener('click', (e) => {
+e.preventDefault();
 window.open('https://aistudio.google.com/app/apikey', '_blank');
 });
+cloakButton.addEventListener('click', cloakWebsite);
 saveSettings.addEventListener('click', saveUserSettings);
 sendButton.addEventListener('click', sendMessage);
 
@@ -219,8 +354,12 @@ sendMessage();
 
 messageInput.addEventListener('input', function() {
 this.style.height = 'auto';
-this.style.height = (this.scrollHeight) + 'px';
+this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
 
 inviteCodeInput.focus();
+
+if (typeof module !== 'undefined' && module.exports) {
+module.exports = { validateInviteCode, cloakWebsite };
+}
 });
