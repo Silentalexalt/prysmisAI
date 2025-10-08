@@ -12,7 +12,8 @@
 --black: #0a0a0a;
 --purple: #7f00ff;
 --purple-light: #9b4dff;
---purple-dark: #5a00b3;
+--blue: #4285f4;
+--blue-light: #64b5f6;
 --white: #ffffff;
 --light-gray: #ccc;
 --gray: #888;
@@ -148,6 +149,7 @@ justify-content: center;
 padding: 2rem;
 position: relative;
 overflow: hidden;
+margin-top: 80px;
 }
 
 #main-content::before {
@@ -166,14 +168,15 @@ animation: float 8s ease-in-out infinite;
 
 .error-container {
 text-align: center;
-max-width: 600px;
-padding: 3rem;
+max-width: 700px;
+padding: 4rem;
 background-color: rgba(26, 26, 26, 0.8);
 backdrop-filter: blur(10px);
 border-radius: 20px;
 border: 1px solid rgba(255, 255, 255, 0.1);
 box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
 animation: glow 4s infinite;
+margin-top: 60px;
 }
 
 .error-icon {
@@ -187,6 +190,24 @@ font-size: 1.5rem;
 margin-bottom: 2rem;
 color: var(--white);
 line-height: 1.6;
+}
+
+.prysmis-link {
+color: var(--blue);
+background: rgba(66, 133, 244, 0.15);
+padding: 2px 8px;
+border-radius: 4px;
+text-decoration: none;
+transition: all 0.3s ease;
+font-weight: 600;
+text-shadow: 0 0 5px rgba(66, 133, 244, 0.3);
+cursor: pointer;
+}
+
+.prysmis-link:hover {
+background: rgba(66, 133, 244, 0.25);
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
 }
 
 .discord-button {
@@ -249,13 +270,18 @@ width: 95%;
 padding: 0.75rem 1.25rem;
 }
 
+#main-content {
+margin-top: 60px;
+}
+
 .error-container {
-padding: 2rem;
+padding: 3rem;
 margin: 1rem;
+margin-top: 40px;
 }
 
 .error-message {
-font-size: 1.2rem;
+font-size: 1.3rem;
 }
 }
 
@@ -268,12 +294,18 @@ font-size: 1.1rem;
 padding: 0.8rem 2rem;
 font-size: 1rem;
 }
+
+.error-container {
+padding: 2rem;
+margin-top: 30px;
+}
 }
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 const navbar = document.getElementById('navbar');
 const discordButton = document.querySelector('.discord-button');
+const prysmisLink = document.querySelector('.prysmis-link');
 
 const cursorLight = document.createElement('div');
 cursorLight.id = 'cursor-light';
@@ -335,6 +367,11 @@ e.preventDefault();
 window.open('https://discord.gg/eKC5CgEZbT', '_blank');
 });
 
+prysmisLink.addEventListener('click', (e) => {
+e.preventDefault();
+window.location.href = '/chatarea';
+});
+
 createParticles();
 createBackgroundOrbs();
 window.addEventListener('scroll', handleNavbarScroll);
@@ -352,7 +389,7 @@ window.addEventListener('scroll', handleNavbarScroll);
 <main id="main-content">
 <div class="error-container">
 <div class="error-icon">⚠️</div>
-<h1 class="error-message">sorry this page is still being worked on join the discord community server here for more updates and login code :)</h1>
+<h1 class="error-message">sorry this page is still being worked on join the discord community server here for more updates and login code to chat with <span class="prysmis-link">Prysmis ai</span> :)</h1>
 <a href="https://discord.gg/eKC5CgEZbT" class="discord-button">Join Discord Server</a>
 </div>
 </main>
