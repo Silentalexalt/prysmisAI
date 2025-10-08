@@ -4,11 +4,324 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prysmis Chat #1 - AI</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --purple: #7f00ff;
+            --white: #ffffff;
+            --light-gray: #ccc;
+            --transition-duration: 0.6s;
+            --animation-duration: 0.4s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* --- Loading Overlay Animation --- */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #loading-container {
+            transition: transform 1s ease-in-out;
+        }
+
+        #welcome-text {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--white);
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth cubic animation */
+            white-space: nowrap;
+        }
+
+        .text-animation.animate-in {
+            opacity: 1;
+            font-size: clamp(2rem, 10vw, 8rem);
+            transform: scale(1);
+        }
+
+        .text-animation.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+        }
+
+        /* --- Main Content and Navbar Initial State --- */
+        #navbar, #main-content {
+            opacity: 0;
+            transition: opacity 1s var(--transition-duration);
+        }
+
+        #navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background-color: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 50;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: opacity 1s ease-in-out;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        #navbar a {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 2rem;
+            transition: color var(--animation-duration), transform var(--animation-duration);
+            padding: 0.5rem 0;
+        }
+
+        #navbar a:hover {
+            color: var(--purple);
+            transform: translateY(-1px);
+        }
+
+        /* --- Hero Section --- */
+        #hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 3rem;
+        }
+
+        .hero-content {
+            padding-top: 60px; /* Offset for fixed navbar */
+        }
+
+        .hero-tagline {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: var(--white);
+        }
+
+        .cta-button {
+            background-color: var(--purple);
+            color: var(--white);
+            border: none;
+            padding: 0.85rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(127, 0, 255, 0.4);
+            transition: background-color var(--animation-duration), transform var(--animation-duration), box-shadow var(--animation-duration);
+        }
+
+        .cta-button:hover {
+            background-color: #9b4dff;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(127, 0, 255, 0.6);
+        }
+
+        /* --- Features Section --- */
+        #features-section {
+            padding: 6rem 3rem;
+            background-color: var(--black);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 600;
+            margin-bottom: 4rem;
+            text-align: center;
+            color: var(--purple);
+        }
+
+        .down-arrow {
+            color: var(--white);
+            font-size: 1.5rem;
+            margin-left: 0.5rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-box {
+            background-color: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            transition: all var(--transition-duration);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-box:hover {
+            transform: translateY(-8px);
+            border-color: var(--purple);
+            box-shadow: 0 15px 40px rgba(127, 0, 255, 0.15);
+        }
+
+        .feature-box h4 {
+            color: var(--purple);
+            font-size: 1.3rem;
+            margin-bottom: 1.25rem;
+            font-weight: 700;
+        }
+
+        .feature-box ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
+
+        .feature-box ul li {
+            margin-bottom: 0.75rem;
+            color: var(--light-gray);
+            line-height: 1.5;
+        }
+
+        .purple-text {
+            color: var(--purple);
+            font-weight: 600;
+            background: rgba(127, 0, 255, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            #navbar {
+                padding: 1rem 1.5rem;
+            }
+
+            #navbar nav {
+                display: none; /* Hide navigation links on small screens for cleaner look */
+            }
+
+            #hero-section {
+                padding: 0 1.5rem;
+                text-align: center;
+            }
+
+            .hero-content {
+                width: 100%;
+            }
+
+            .section-title {
+                margin-bottom: 2.5rem;
+            }
+
+            #features-section {
+                padding: 3rem 1.5rem;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const welcomeText = document.getElementById('welcome-text');
+            const mainContent = document.getElementById('main-content');
+            const navbar = document.getElementById('navbar');
+            const ctaButton = document.querySelector('.cta-button');
+
+            const initialText = "Welcome.";
+            const secondText = "To Prysmis.";
+
+            const startAnimation = () => {
+                // Step 1: "Welcome." smooth fade in and scale up (0ms to 3000ms)
+                setTimeout(() => {
+                    welcomeText.classList.add('animate-in');
+                }, 100);
+
+                // Step 2: Swap text to "To Prysmis." and start fade out (3000ms)
+                setTimeout(() => {
+                    welcomeText.classList.remove('animate-in');
+                    welcomeText.classList.add('fade-out');
+                    
+                    // Allow CSS transition to begin fade out before changing text content
+                    setTimeout(() => {
+                        welcomeText.textContent = secondText;
+                        welcomeText.classList.remove('fade-out');
+
+                        // Reset and trigger smooth fade in for second text
+                        void welcomeText.offsetWidth; // Force reflow
+                        welcomeText.classList.add('animate-in');
+                    }, 1000); // 4000ms total
+                    
+                }, 3000);
+
+                // Step 3: Fade out "To Prysmis." and start dissolving overlay (5000ms)
+                setTimeout(() => {
+                    welcomeText.classList.remove('animate-in');
+                    welcomeText.classList.add('fade-out');
+
+                    // Initiate overlay fade out ("dust spreading apart")
+                    setTimeout(() => {
+                        loadingOverlay.style.opacity = '0';
+                    }, 500); // 5500ms total
+                }, 5000);
+
+                // Step 4: Final cleanup and show main content/navbar (6500ms)
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    
+                    // Show main content and navbar
+                    navbar.style.opacity = '1';
+                    mainContent.style.opacity = '1';
+                    mainContent.style.pointerEvents = 'auto'; // Re-enable interaction
+                }, 6500);
+            };
+
+            // CTA Button Navigation
+            ctaButton.addEventListener('click', () => {
+                window.location.href = '/chatarea';
+            });
+
+            startAnimation();
+        });
+    </script>
 </head>
 <body>
     <div id="loading-overlay">
-        <h1 id="welcome-text" class="text-animation">Welcome.</h1>
+        <div id="loading-container">
+            <h1 id="welcome-text" class="text-animation">Welcome.</h1>
+        </div>
     </div>
 
     <header id="navbar">
@@ -19,7 +332,7 @@
         </nav>
     </header>
 
-    <main id="main-content" class="hidden">
+    <main id="main-content">
         <section id="hero-section">
             <div class="hero-content">
                 <h2 class="hero-tagline">Expect the speed from prysmis.</h2>
@@ -27,7 +340,7 @@
             </div>
         </section>
 
-        <section id="features-section" class="scroll-section">
+        <section id="features-section">
             <h3 class="section-title">Features of prysmis ai. <span class="down-arrow">↓</span></h3>
             <div class="feature-grid">
                 <div class="feature-box">
@@ -53,7 +366,5 @@
             </div>
         </section>
     </main>
-
-    <script src="script.js"></script>
 </body>
 </html>
