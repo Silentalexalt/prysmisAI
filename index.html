@@ -37,7 +37,7 @@
             scroll-behavior: smooth;
         }
 
-        /* --- Loading Overlay Animation --- */
+        /* --- Loading Overlay Animation (Stickman) --- */
         #loading-overlay {
             position: fixed;
             top: 0;
@@ -50,57 +50,150 @@
             align-items: center;
             z-index: 9999;
             opacity: 1;
-            /* Transition for the dust spreading effect (now includes transform) */
+            /* Transition for the dust spreading effect */
             transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out; 
+            overflow: hidden; /* Important for hiding initial off-screen movement */
+        }
+        
+        #loading-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: visible; 
         }
 
-        #welcome-text {
-            font-size: 1rem;
-            font-weight: 700;
+        /* Group for the stickman and logo to move together */
+        #drag-group {
+            position: absolute;
+            display: flex;
+            align-items: flex-end; /* Align the stickman and text baseline */
+            gap: 10px;
+            /* Initial position: far left, off-screen */
+            transform: translateX(-100vw);
+            transition: none; /* Controlled purely by keyframes */
+        }
+
+        #logo-text {
+            font-size: clamp(2rem, 8vw, 6rem);
+            font-weight: 900;
             color: var(--white);
-            opacity: 0;
-            transform: scale(0.5);
-            /* Smoother cubic animation */
-            transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
             white-space: nowrap;
+            opacity: 1; 
+            margin-bottom: 10px; /* Align with stickman's feet */
+            z-index: 10;
         }
 
-        .text-animation.animate-in {
-            opacity: 1;
-            font-size: clamp(2rem, 12vw, 8rem);
-            transform: scale(1);
+        /* STICKMAN SVG SETUP */
+        #stickman {
+            height: 80px;
+            width: 80px;
+            margin-bottom: 10px; /* Align with logo */
+            transform: scaleX(-1); /* Flip horizontally to face left (walking backward) */
+            transition: transform 0.5s ease; /* For smooth turn at the end */
+            z-index: 20;
+            /* Styling for the stick figure - ENSURING IT IS WHITE */
+            stroke: var(--white);
+            stroke-width: 8; 
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            overflow: visible;
         }
 
-        .text-animation.fade-out {
-            opacity: 0;
-            transform: scale(1.05); /* Slightly smaller scale on fade out */
-            transition: all 0.8s ease-out; /* Faster fade out */
+        /* Keyframes for internal stickman movement (walking body bounce) */
+        @keyframes walkBackward {
+            0% { transform: scaleX(-1) translateY(-2px); }
+            50% { transform: scaleX(-1) translateY(2px); }
+            100% { transform: scaleX(-1) translateY(-2px); }
+        }
+        
+        /* Keyframes for internal stickman movement (arm/leg swing) */
+        @keyframes limbSwing {
+            0% { transform: rotate(10deg); }
+            50% { transform: rotate(-10deg); }
+            100% { transform: rotate(10deg); }
         }
 
-        /* --- Main Content and Navbar Initial State (CRITICAL: added pointer-events: none) --- */
+        /* Keyframes for the Drag Group movement across the screen */
+        @keyframes dragAcross {
+            /* Start off screen left */
+            0% { transform: translateX(-100vw); }
+            /* Stop position: near center, adjusted to visually stop the text near the center line */
+            100% { transform: translateX(calc(50vw - 250px)); } 
+        }
+
+        /* Keyframes for the Logo "Throw" (Arc and Landing) */
+        @keyframes throwLogo {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            30% { transform: translate(0, -150px) scale(1.1) rotate(5deg); opacity: 1; } /* Higher arc, slight scale up */
+            60% { transform: translate(0, -50px) scale(1.05) rotate(-5deg); opacity: 1; } 
+            100% { 
+                /* End position at the true center of the screen */
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%); /* Perfect centering */
+                opacity: 1;
+            }
+        }
+
+        /* Keyframes for Waving */
+        @keyframes waveArm {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(-60deg); } 
+        }
+
+        /* Classes to trigger animations via JS */
+        .anim-dragging #drag-group {
+            /* Smoother ease: fast start, smooth stop */
+            animation: dragAcross 3.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+        }
+
+        .anim-walking #stickman {
+            animation: walkBackward 0.4s infinite alternate;
+        }
+        
+        .anim-walking .stickman-limb {
+            transform-origin: 50% 10%; /* Rotate from shoulder/hip area */
+            animation: limbSwing 0.4s infinite alternate;
+        }
+
+        .anim-throwing #logo-text {
+            animation: throwLogo 1.5s cubic-bezier(0.2, 0.8, 0.5, 1.8) forwards; 
+        }
+        
+        .anim-waving .stickman-arm-right {
+            transform-origin: 50% 10%;
+            animation: waveArm 0.4s infinite alternate;
+        }
+
+        /* --- Main Content and Navbar Initial State --- */
         #navbar, #main-content {
             opacity: 0;
             transition: opacity 1s ease-in-out;
             pointer-events: none; /* Prevents interaction/covering of the loading screen */
         }
 
-        /* --- Floating Navbar Style --- */
+        /* --- Floating Navbar Style (Unchanged from previous version) --- */
         #navbar {
             position: fixed;
-            top: 2.5rem; /* Increased spacing from top edge */
+            top: 2.5rem; 
             left: 50%;
-            transform: translateX(-50%); /* Center horizontally */
-            max-width: 1200px; /* Maximum size */
-            width: 90%; /* Floating, smaller width */
+            transform: translateX(-50%); 
+            max-width: 1200px;
+            width: 90%; 
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 2rem;
-            background-color: rgba(26, 26, 26, 0.9); /* Semi-transparent dark background */
+            background-color: rgba(26, 26, 26, 0.9);
             backdrop-filter: blur(12px);
             z-index: 50;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px; /* Rounded corners */
+            border-radius: 12px; 
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
         }
 
@@ -116,30 +209,30 @@
             text-decoration: none;
             font-weight: 500;
             margin-left: 1.5rem;
-            padding: 0.5rem 1rem; /* Padding for the hover box */
+            padding: 0.5rem 1rem; 
             border-radius: 6px;
             transition: all var(--transition-duration) ease-in-out;
             white-space: nowrap;
         }
 
         #navbar a:hover {
-            color: var(--white); /* Ensures text stays white */
-            background-color: var(--purple); /* Purple box highlight */
+            color: var(--white);
+            background-color: var(--purple); 
             transform: translateY(-2px);
             box-shadow: 0 2px 10px rgba(127, 0, 255, 0.4);
         }
 
-        /* --- Hero Section (Content on the left) --- */
+        /* --- Hero Section (Unchanged) --- */
         #hero-section {
             min-height: 100vh;
             display: flex;
             align-items: center;
-            justify-content: flex-start; /* Align content to the left */
+            justify-content: flex-start;
             padding: 0 5rem;
         }
 
         .hero-content {
-            padding-top: 0; /* Navbar is floating, no top offset needed here */
+            padding-top: 0;
             max-width: 500px;
         }
 
@@ -169,10 +262,10 @@
             box-shadow: 0 8px 25px rgba(127, 0, 255, 0.8);
         }
 
-        /* --- Features Section --- */
+        /* --- Features Section (Unchanged) --- */
         #features-section {
             padding: 8rem 5rem;
-            background-color: transparent; /* Let the body background show */
+            background-color: transparent;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -239,7 +332,7 @@
             border-radius: 4px;
         }
 
-        /* --- Responsive Design --- */
+        /* --- Responsive Design (Unchanged) --- */
         @media (max-width: 768px) {
             #navbar {
                 top: 1rem;
@@ -254,7 +347,7 @@
             #hero-section {
                 padding: 0 2rem;
                 text-align: center;
-                justify-content: center; /* Center content on mobile */
+                justify-content: center;
             }
 
             .hero-tagline {
@@ -282,62 +375,96 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const loadingOverlay = document.getElementById('loading-overlay');
-            const welcomeText = document.getElementById('welcome-text');
             const mainContent = document.getElementById('main-content');
             const navbar = document.getElementById('navbar');
             const ctaButton = document.querySelector('.cta-button');
 
-            // Using descriptive variables for text
-            const initialText = "Welcome.";
-            const secondText = "To Prysmis.";
+            const stickman = document.getElementById('stickman');
+            const dragGroup = document.getElementById('drag-group');
+            const logoText = document.getElementById('logo-text');
+            const stickmanArmRight = document.getElementById('stickman-arm-right');
+            const stickmanArmLeft = document.getElementById('stickman-arm-left');
+            const stickmanLegRight = document.getElementById('stickman-leg-right');
+            const stickmanLegLeft = document.getElementById('stickman-leg-left');
 
             const startAnimation = () => {
-                // Defined time steps for smooth, sequential animation
-                const STEP_1_WELCOME_IN = 100;    // Start welcome text
-                const STEP_2_WELCOME_OUT = 1600;  // Start welcome text fade out (1.5s display)
-                const STEP_3_PRYSMIS_IN = 2600;   // Swap text and fade in Prysmis
-                const STEP_4_PRYSMIS_OUT = 4100;  // Start Prysmis text fade out (1.5s display)
-                const STEP_5_OVERLAY_DISSOLVE = 4600; // Start the overlay fade-out and scale
-                const STEP_6_CLEANUP = 6300;      // Final cleanup and show main UI
+                // Defined time steps for the new animation sequence
+                const DRAG_DURATION = 3500;
+                const THROW_DURATION = 1500;
+                const WAVE_DURATION = 1200;
+                const FADE_OUT_DURATION = 1700;
+                
+                const STEP_1_START_DRAG = 100;                      // Start dragging (0.1s)
+                const STEP_2_STOP_WALK = STEP_1_START_DRAG + DRAG_DURATION;    // Stickman reaches center, stops walking (3.6s)
+                const STEP_3_THROW_LOGO = STEP_2_STOP_WALK + 300;           // Start logo throw (3.9s)
+                const STEP_4_WAVE_TURN = STEP_3_THROW_LOGO + THROW_DURATION; // Stickman turns to face user (5.4s)
+                const STEP_5_WAVE_START = STEP_4_WAVE_TURN + 300;           // Start waving (5.7s)
+                const STEP_6_FADE_OUT = STEP_5_WAVE_START + WAVE_DURATION;  // Stop waving, start fade out (6.9s)
+                const STEP_7_CLEANUP = STEP_6_FADE_OUT + FADE_OUT_DURATION; // Final cleanup and show main UI (8.6s)
 
-                // 1. Welcome In (0.1s)
-                setTimeout(() => {
-                    welcomeText.classList.add('animate-in');
-                }, STEP_1_WELCOME_IN); 
+                // Helper to stop walking animations
+                const stopWalk = () => {
+                    dragGroup.classList.remove('anim-dragging');
+                    stickman.style.animation = 'none'; // Stop body bob
+                    stickmanArmRight.style.animation = 'none';
+                    stickmanArmLeft.style.animation = 'none';
+                    stickmanLegRight.style.animation = 'none';
+                    stickmanLegLeft.style.animation = 'none';
+                };
 
-                // 2. Welcome Out (1.6s)
+                // 1. Start Dragging & Walking (0.1s)
                 setTimeout(() => {
-                    welcomeText.classList.remove('animate-in');
-                    welcomeText.classList.add('fade-out');
-                }, STEP_2_WELCOME_OUT); 
+                    dragGroup.classList.add('anim-dragging');
+                    stickman.classList.add('anim-walking');
+                    
+                    // Apply walking animation to limbs
+                    stickmanArmRight.classList.add('stickman-limb', 'anim-walking');
+                    stickmanArmLeft.classList.add('stickman-limb', 'anim-walking');
+                    stickmanLegRight.classList.add('stickman-limb', 'anim-walking');
+                    stickmanLegLeft.classList.add('stickman-limb', 'anim-walking');
 
-                // 3. Prysmis In (2.6s)
-                setTimeout(() => {
-                    welcomeText.textContent = secondText;
-                    welcomeText.classList.remove('fade-out');
-                    void welcomeText.offsetWidth; // Force reflow to reset transition
-                    welcomeText.classList.add('animate-in');
-                }, STEP_3_PRYSMIS_IN); 
+                }, STEP_1_START_DRAG);
 
-                // 4. Prysmis Out (4.1s)
+                // 2. Stop Walking, Prepare for Throw (3.6s)
                 setTimeout(() => {
-                    welcomeText.classList.remove('animate-in');
-                    welcomeText.classList.add('fade-out');
-                }, STEP_4_PRYSMIS_OUT); 
+                    stopWalk();
+                    // Slight lean after stopping
+                    stickman.style.transform = 'scaleX(-1) translateX(-5px)'; 
+                }, STEP_2_STOP_WALK);
 
-                // 5. Start Overlay Dissolution (4.6s)
+                // 3. Throw Logo (3.9s) - The logo jumps away
                 setTimeout(() => {
+                    // Trigger the throw keyframe on the logo
+                    logoText.classList.add('anim-throwing');
+                }, STEP_3_THROW_LOGO);
+                
+                // 4. Turn to face user (5.4s)
+                setTimeout(() => {
+                    // Turn stickman to face the user (right) smoothly
+                    stickman.style.transform = 'scaleX(1)'; 
+                }, STEP_4_WAVE_TURN);
+
+                // 5. Start Waving (5.7s)
+                setTimeout(() => {
+                    stickmanArmRight.classList.add('anim-waving');
+                }, STEP_5_WAVE_START);
+
+                // 6. Start Fade Out (6.9s)
+                setTimeout(() => {
+                    stickmanArmRight.classList.remove('anim-waving');
+                    
                     loadingOverlay.style.opacity = '0';
-                    loadingOverlay.style.transform = 'scale(1.03)'; // Subtle 'dust spreading' effect
-                }, STEP_5_OVERLAY_DISSOLVE);
+                    loadingOverlay.style.transform = 'scale(1.03)';
+                }, STEP_6_FADE_OUT);
 
-                // 6. Final Cleanup and Show Content (6.3s)
+
+                // 7. Final Cleanup and Show Content (8.6s)
                 setTimeout(() => {
                     loadingOverlay.style.display = 'none';
                     navbar.style.opacity = '1';
                     mainContent.style.opacity = '1';
                     mainContent.style.pointerEvents = 'auto'; // Re-enable interaction on main content
-                }, STEP_6_CLEANUP);
+                }, STEP_7_CLEANUP);
             };
 
             // CTA Button Navigation
@@ -352,7 +479,28 @@
 <body>
     <div id="loading-overlay">
         <div id="loading-container">
-            <h1 id="welcome-text" class="text-animation">Welcome.</h1>
+            
+            <div id="drag-group">
+                <!-- Stick Figure SVG (White and animated) -->
+                <svg id="stickman" viewBox="0 0 100 100">
+                    <!-- Head -->
+                    <circle cx="50" cy="15" r="10"/>
+                    <!-- Body -->
+                    <line x1="50" y1="25" x2="50" y2="60"/>
+                    <!-- Right Arm (used for waving) -->
+                    <line id="stickman-arm-right" class="stickman-limb" x1="50" y1="35" x2="70" y2="45"/>
+                    <!-- Left Arm (dragging) -->
+                    <line id="stickman-arm-left" class="stickman-limb" x1="50" y1="35" x2="30" y2="45"/>
+                    <!-- Right Leg -->
+                    <line id="stickman-leg-right" class="stickman-limb" x1="50" y1="60" x2="60" y2="85"/>
+                    <!-- Left Leg -->
+                    <line id="stickman-leg-left" class="stickman-limb" x1="50" y1="60" x2="40" y2="85"/>
+                </svg>
+
+                <!-- Logo Text to be dragged -->
+                <h1 id="logo-text">Prysmis :)</h1>
+            </div>
+
         </div>
     </div>
 
