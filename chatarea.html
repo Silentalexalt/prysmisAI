@@ -3,18 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prysmis AI - Chat Area</title>
+<title>Prysmis AI - Advanced Chat Interface</title>
 <link rel="stylesheet" href="backend.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="chat-container">
 <div class="auth-box">
-<h2>Welcome to Prysmis AI</h2>
-<p class="subtitle">Enter your invite code to access the chat</p>
+<h2>Prysmis AI</h2>
+<p class="subtitle">Enter your invite code to access advanced AI chat</p>
 
 <div class="input-group">
-<input type="text" id="inviteCode" placeholder="enter invite code to access." class="code-input">
-<button id="submitCode" class="submit-btn">Access Chat</button>
+<input type="text" id="inviteCode" placeholder="Enter your exclusive invite code" class="code-input">
+<button id="submitCode" class="submit-btn">Access AI Chat</button>
 </div>
 
 <div id="errorMessage" class="error-message"></div>
@@ -23,7 +26,9 @@
 <div class="chat-area" id="chatArea">
 <div class="chat-header">
 <div class="chat-title">Prysmis AI</div>
-<button class="settings-btn" id="settingsButton">⚙️</button>
+<div class="header-actions">
+<button class="icon-btn" id="settingsButton" title="Settings">⚙️</button>
+</div>
 </div>
 
 <div class="chat-messages" id="chatMessages"></div>
@@ -33,10 +38,19 @@
 <textarea
 id="messageInput"
 class="message-input"
-placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
+placeholder="ask prysmis ai anything or use / commands"
 rows="1"
 ></textarea>
-<button id="sendButton" class="send-btn">➤</button>
+<button id="sendButton" class="send-btn" title="Send message">➤</button>
+</div>
+<div class="command-hint">
+<strong>Available commands:</strong>
+<div class="command-list">
+<div class="command-item">/help</div>
+<div class="command-item">/clear</div>
+<div class="command-item">/code</div>
+<div class="command-item">/math</div>
+</div>
 </div>
 </div>
 </div>
@@ -44,48 +58,63 @@ rows="1"
 
 <div class="settings-ui" id="settingsUI">
 <div class="settings-sidebar">
-<button class="settings-tab" id="userSettingsBtn">User Settings</button>
-<button class="settings-tab active" id="aiSettingsBtn">AI Settings</button>
+<button class="settings-tab active" id="aiSettingsBtn">🤖 AI Settings</button>
+<button class="settings-tab" id="userSettingsBtn">👤 User Settings</button>
 </div>
 
 <div class="settings-content">
 <div class="settings-header">
 <div class="settings-title">Settings</div>
-<button class="close-settings" id="closeSettings">✕</button>
+<button class="close-settings" id="closeSettings" title="Close">✕</button>
 </div>
 
 <div class="settings-page active" id="aiSettingsPage">
 <div class="setting-group">
-<label class="setting-label">Enter your Gemini API key here</label>
-<input type="password" id="apiKeyInput" class="api-key-input" placeholder="Enter your API key">
-<a href="#" id="generateApiKeyLink" class="generate-link">click here directly to generate your Gemini api key</a>
+<label class="setting-label">Gemini API Configuration</label>
+<p class="setting-description">Enter your Gemini API key to enable advanced AI features</p>
+<input type="password" id="apiKeyInput" class="api-key-input" placeholder="Enter your Gemini API key">
+<a href="#" id="generateApiKeyLink" class="generate-link">
+🔑 Click here to generate your Gemini API key
+</a>
 </div>
 
 <div class="setting-group">
-<label class="setting-label">Enable AI response speed</label>
+<label class="setting-label">AI Response Settings</label>
+<div class="toggle-group">
+<span>Enable thinking animation</span>
 <label class="toggle-switch">
 <input type="checkbox" id="speedToggle" checked>
 <span class="toggle-slider"></span>
 </label>
 </div>
+<p class="setting-description">Show/hide AI thinking animation for faster responses</p>
+</div>
 </div>
 
 <div class="settings-page" id="userSettingsPage">
 <div class="setting-group">
-<label class="setting-label">Your Display Name</label>
-<input type="text" id="userNameInput" class="api-key-input" placeholder="Enter your name">
+<label class="setting-label">Personalization</label>
+<input type="text" id="userNameInput" class="api-key-input" placeholder="Enter your display name" value="User">
+<p class="setting-description">This name will be used in conversations with the AI</p>
 </div>
 
 <div class="setting-group">
-<label class="setting-label">Website Theme</label>
+<label class="setting-label">Interface Theme</label>
 <select id="themeSelect" class="theme-select">
 <option value="dark">Dark Mode</option>
 <option value="light">Light Mode</option>
 </select>
+<p class="setting-description">Choose your preferred interface appearance</p>
+</div>
+
+<div class="setting-group">
+<label class="setting-label">Privacy & Security</label>
+<p class="setting-description">Cloak this website to appear as a different page</p>
+<button id="cloakButton" class="cloak-btn">🕶️ Cloak This Website</button>
 </div>
 </div>
 
-<button id="saveSettings" class="save-settings-btn">Save Settings</button>
+<button id="saveSettings" class="save-settings-btn">💾 Save All Settings</button>
 </div>
 </div>
 
