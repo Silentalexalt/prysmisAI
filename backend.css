@@ -88,3 +88,80 @@ font-size: 1rem;
 transition: all var(--transition-duration);
 backdrop-filter: blur(10px);
 }
+
+.code-input:focus {
+outline: none;
+border-color: var(--purple);
+box-shadow: 0 0 0 2px rgba(127, 0, 255, 0.3);
+background: rgba(255, 255, 255, 0.15);
+}
+
+.code-input::placeholder {
+color: var(--gray);
+}
+
+.submit-btn {
+background: linear-gradient(45deg, var(--purple), var(--purple-light));
+color: var(--white);
+border: none;
+padding: 1rem 2rem;
+font-size: 1.1rem;
+font-weight: 600;
+border-radius: 12px;
+cursor: pointer;
+transition: all var(--animation-duration);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.submit-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(127, 0, 255, 0.6);
+}
+
+.submit-btn:active {
+transform: translateY(0);
+}
+
+.error-message {
+color: #ff6b6b;
+font-size: 0.9rem;
+margin-top: 1rem;
+min-height: 1.2rem;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+
+.error-message.show {
+opacity: 1;
+}
+
+@media (max-width: 768px) {
+body {
+padding: 1rem;
+}
+
+.auth-box {
+padding: 2rem;
+}
+
+.auth-box h2 {
+font-size: 2rem;
+}
+}
+
+@media (max-width: 480px) {
+.auth-box {
+padding: 1.5rem;
+}
+
+.auth-box h2 {
+font-size: 1.8rem;
+}
+
+.code-input, .submit-btn {
+padding: 0.8rem 1.2rem;
+}
+}
+Positive
+Negativ
