@@ -141,9 +141,11 @@ text-shadow: 0 0 20px rgba(127, 0, 255, 0.5);
 60% { transform: translateY(-5px); }
 }
 
-@keyframes shimmer {
-0% { background-position: -1000px 0; }
-100% { background-position: 1000px 0; }
+@keyframes priceFlip {
+0% { transform: translateY(0) rotateX(0); opacity: 1; }
+49% { transform: translateY(-20px) rotateX(-90deg); opacity: 0; }
+51% { transform: translateY(20px) rotateX(90deg); opacity: 0; }
+100% { transform: translateY(0) rotateX(0); opacity: 1; }
 }
 
 #navbar, #main-content {
@@ -270,18 +272,6 @@ text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 position: relative;
 }
 
-.hero-tagline::after {
-content: '';
-position: absolute;
-bottom: -10px;
-left: 50%;
-transform: translateX(-50%);
-width: 100px;
-height: 3px;
-background: linear-gradient(90deg, transparent, var(--purple), transparent);
-animation: shimmer 3s infinite linear;
-}
-
 .hero-tagline .prysmis {
 font-size: clamp(2.5rem, 5vw, 5rem);
 font-weight: 700;
@@ -366,18 +356,6 @@ transform: translateY(50px);
 transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
 animation: slideUp 0.8s ease-out 0.9s both;
 position: relative;
-}
-
-.section-title::after {
-content: '';
-position: absolute;
-bottom: -20px;
-left: 50%;
-transform: translateX(-50%);
-width: 200px;
-height: 3px;
-background: linear-gradient(90deg, transparent, var(--purple), transparent);
-animation: shimmer 3s infinite linear;
 }
 
 .loaded .section-title {
@@ -490,6 +468,123 @@ display: inline-block;
 text-shadow: 0 0 5px rgba(127, 0, 255, 0.3);
 }
 
+#premium-section {
+padding: 8rem 5rem;
+background-color: transparent;
+border-top: 1px solid rgba(255, 255, 255, 0.05);
+position: relative;
+}
+
+#premium-section::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: radial-gradient(circle at 50% 50%, rgba(127, 0, 255, 0.1) 0%, transparent 70%);
+z-index: -1;
+}
+
+.premium-title {
+font-size: clamp(2.5rem, 6vw, 3.5rem);
+font-weight: 700;
+margin-bottom: 1rem;
+text-align: center;
+background: linear-gradient(to right, var(--purple), var(--white));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+letter-spacing: 0.1em;
+text-shadow: 0 0 10px rgba(127, 0, 255, 0.3);
+opacity: 0;
+transform: translateY(50px);
+animation: slideUp 0.8s ease-out 1s both;
+}
+
+.price-container {
+text-align: center;
+margin-bottom: 3rem;
+opacity: 0;
+transform: translateY(30px);
+animation: slideUp 0.8s ease-out 1.2s both;
+}
+
+.price-flip {
+font-size: clamp(3rem, 8vw, 6rem);
+font-weight: 900;
+color: var(--white);
+display: inline-block;
+perspective: 1000px;
+}
+
+.price-digit {
+display: inline-block;
+transform-style: preserve-3d;
+animation: priceFlip 2s ease-in-out infinite;
+}
+
+.premium-feature-box {
+background: linear-gradient(135deg, #161616, #1a1a1a);
+border: 1px solid rgba(127, 0, 255, 0.3);
+padding: 3rem;
+border-radius: 20px;
+box-shadow: 0 15px 40px rgba(127, 0, 255, 0.2);
+max-width: 600px;
+margin: 0 auto;
+opacity: 0;
+transform: translateY(50px);
+animation: slideUp 0.8s ease-out 1.4s both;
+position: relative;
+overflow: hidden;
+}
+
+.premium-feature-box::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 4px;
+background: linear-gradient(to right, var(--purple), var(--purple-light));
+}
+
+.premium-feature-box h4 {
+color: var(--purple);
+font-size: 1.4rem;
+margin-bottom: 1.5rem;
+font-weight: 700;
+text-align: center;
+text-shadow: 0 0 10px rgba(127, 0, 255, 0.3);
+}
+
+.premium-feature-box ul {
+list-style-type: none;
+padding-left: 0;
+}
+
+.premium-feature-box ul li {
+margin-bottom: 1rem;
+color: var(--light-gray);
+line-height: 1.6;
+position: relative;
+padding-left: 2rem;
+transition: all 0.3s ease;
+}
+
+.premium-feature-box ul li:hover {
+color: var(--white);
+transform: translateX(5px);
+}
+
+.premium-feature-box ul li::before {
+content: '✦';
+position: absolute;
+left: 0;
+color: var(--purple);
+font-weight: bold;
+font-size: 1.2rem;
+}
+
 footer {
 padding: 3rem 5rem;
 text-align: center;
@@ -561,6 +656,14 @@ margin-bottom: 3rem;
 padding: 4rem 2rem;
 }
 
+#premium-section {
+padding: 4rem 2rem;
+}
+
+.premium-feature-box {
+padding: 2rem;
+}
+
 footer {
 padding: 2rem;
 }
@@ -578,6 +681,11 @@ font-size: 2.2rem;
 .feature-grid {
 grid-template-columns: 1fr;
 }
+
+.premium-feature-box ul li {
+padding-left: 1.5rem;
+font-size: 0.9rem;
+}
 }
 </style>
 <script>
@@ -586,6 +694,7 @@ const loadingOverlay = document.getElementById('loading-overlay');
 const mainContent = document.getElementById('main-content');
 const navbar = document.getElementById('navbar');
 const ctaButton = document.querySelector('.cta-button');
+const priceDigit = document.querySelector('.price-digit');
 
 const cursorLight = document.createElement('div');
 cursorLight.id = 'cursor-light';
@@ -642,6 +751,25 @@ navbar.classList.remove('scrolled');
 }
 }
 
+function startPriceAnimation() {
+let currentPrice = 0;
+const targetPrice = 10;
+let isAnimating = false;
+
+function animatePrice() {
+if (isAnimating) return;
+isAnimating = true;
+
+setTimeout(() => {
+priceDigit.textContent = `$${targetPrice}`;
+isAnimating = false;
+}, 1000);
+}
+
+animatePrice();
+setInterval(animatePrice, 4000);
+}
+
 const startAnimation = () => {
 setTimeout(() => {
 loadingOverlay.style.opacity = '0';
@@ -655,6 +783,7 @@ navbar.style.pointerEvents = 'auto';
 mainContent.style.opacity = '1';
 mainContent.style.pointerEvents = 'auto';
 document.body.classList.add('loaded');
+startPriceAnimation();
 }, 3000);
 };
 
@@ -700,6 +829,7 @@ startAnimation();
 <span class="logo">Prysmis :)</span>
 <nav>
 <a href="#features-section">features</a>
+<a href="#premium-section">premium</a>
 <a href="#">Docs</a>
 </nav>
 </header>
@@ -738,6 +868,25 @@ Expect the speed from
 <li>either type <span class="purple-text">"What are your features?"</span> or use the command <span class="purple-text">"/features"</span> to list down the features for the website version and the bookmarklet version.</li>
 </ul>
 </div>
+</div>
+</section>
+
+<section id="premium-section">
+<h3 class="premium-title">Prysmis AI Premium:</h3>
+<div class="price-container">
+<div class="price-flip">
+<span class="price-digit">$0</span>
+</div>
+</div>
+<div class="premium-feature-box">
+<h4>Premium Features</h4>
+<ul>
+<li>Able to image generate (soon)</li>
+<li>Able to view website external domains</li>
+<li>Able to analysis YouTube videos accurately (with a YouTube domain link provided)</li>
+<li>Unlock the ability to change AI models with a single click</li>
+<li>More coming soon. Suggest me some?</li>
+</ul>
 </div>
 </section>
 </main>
