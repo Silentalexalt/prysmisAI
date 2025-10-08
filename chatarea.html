@@ -3,18 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prysmis AI - Chat Area</title>
+<title>Prysmis AI - Welcome</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
---primary: #7f00ff;
---primary-light: #9b4dff;
---secondary: #00d4ff;
---background: #0a0a0a;
---surface: #1a1a1a;
---surface-light: #2a2a2a;
---text-primary: #ffffff;
---text-secondary: #b0b0b0;
+--primary: #8a2be2;
+--secondary: #4169e1;
+--background: #101010;
+--surface: #1d1d1d;
+--text-primary: #f0f0f0;
+--text-secondary: #a0a0a0;
 --border: rgba(255, 255, 255, 0.1);
+--shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="light"] {
+--primary: #7f00ff;
+--secondary: #007bff;
+--background: #f8f9fa;
+--surface: #ffffff;
+--text-primary: #212529;
+--text-secondary: #6c757d;
+--border: rgba(0, 0, 0, 0.1);
+--shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -22,6 +35,7 @@ box-sizing: border-box;
 margin: 0;
 padding: 0;
 font-family: 'Inter', sans-serif;
+transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
@@ -32,53 +46,62 @@ display: flex;
 align-items: center;
 justify-content: center;
 padding: 1rem;
+overflow: hidden;
 }
 
 body::before {
 content: '';
 position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background:
-radial-gradient(circle at 20% 80%, rgba(127, 0, 255, 0.15) 0%, transparent 50%),
-radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+top: -50%;
+left: -50%;
+width: 200%;
+height: 200%;
+background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 40%),
+radial-gradient(circle at top right, rgba(65, 105, 225, 0.1) 0%, transparent 50%);
+animation: cosmic-bg 20s linear infinite;
 z-index: -1;
 }
 
-.glass {
-background: rgba(26, 26, 26, 0.8);
-backdrop-filter: blur(20px);
-border: 1px solid var(--border);
-border-radius: 20px;
+@keyframes cosmic-bg {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
 }
 
-.chat-container {
+.glass {
+background: var(--surface-alpha, rgba(29, 29, 29, 0.6));
+backdrop-filter: blur(24px);
+-webkit-backdrop-filter: blur(24px);
+border: 1px solid var(--border);
+border-radius: 24px;
+box-shadow: var(--shadow);
+}
+
+[data-theme="light"] .glass {
+--surface-alpha: rgba(255, 255, 255, 0.6);
+}
+
+.container {
 width: 100%;
-max-width: 800px;
+max-width: 900px;
 height: 90vh;
+max-height: 800px;
+display: flex;
+flex-direction: column;
 }
 
 .auth-box {
 padding: 3rem;
 text-align: center;
-animation: slideUp 0.6s ease-out;
+animation: fadeIn 0.8s ease-out;
 }
 
-@keyframes slideUp {
-from {
-opacity: 0;
-transform: translateY(30px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
+@keyframes fadeIn {
+from { opacity: 0; transform: scale(0.95); }
+to { opacity: 1; transform: scale(1); }
 }
 
-.auth-box h2 {
-font-size: 2.5rem;
+.auth-box h1 {
+font-size: 2.8rem;
 font-weight: 700;
 margin-bottom: 1rem;
 background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -86,408 +109,552 @@ background: linear-gradient(135deg, var(--primary), var(--secondary));
 -webkit-text-fill-color: transparent;
 }
 
-.subtitle {
+.auth-box p {
 color: var(--text-secondary);
-margin-bottom: 2rem;
+margin-bottom: 2.5rem;
 font-size: 1.1rem;
 }
 
-.input-group {
-display: flex;
-flex-direction: column;
-gap: 1rem;
-margin-bottom: 1.5rem;
-}
-
-.code-input {
-background: rgba(255, 255, 255, 0.08);
-border: 1.5px solid var(--border);
-border-radius: 12px;
+.input-field {
+background: rgba(0, 0, 0, 0.2);
+border: 1px solid var(--border);
+border-radius: 14px;
 padding: 1rem 1.5rem;
 color: var(--text-primary);
 font-size: 1rem;
+width: 100%;
 transition: all 0.3s ease;
 }
 
-.code-input:focus {
+.input-field:focus {
 outline: none;
 border-color: var(--primary);
-background: rgba(255, 255, 255, 0.12);
+background: rgba(0, 0, 0, 0.3);
 }
 
-.submit-btn {
-background: linear-gradient(135deg, var(--primary), var(--primary-light));
+.action-btn {
+background: linear-gradient(135deg, var(--primary), var(--secondary));
 color: white;
 border: none;
-padding: 1rem 2rem;
-font-size: 1.1rem;
+padding: 1rem;
+font-size: 1rem;
 font-weight: 600;
-border-radius: 12px;
+border-radius: 14px;
 cursor: pointer;
+width: 100%;
+margin-top: 1rem;
 transition: all 0.3s ease;
 }
 
-.submit-btn:hover {
-transform: translateY(-2px);
+.action-btn:hover {
+transform: translateY(-3px);
+box-shadow: 0 4px 20px rgba(138, 43, 226, 0.4);
 }
 
-.error-message {
+.error-msg {
 color: #ff6b6b;
-font-size: 0.9rem;
 margin-top: 1rem;
 min-height: 1.2rem;
 opacity: 0;
 transition: opacity 0.3s ease;
 }
+.error-msg.show { opacity: 1; }
 
-.error-message.show {
-opacity: 1;
-}
-
-.chat-area {
+.chat-interface {
 display: none;
-opacity: 0;
+flex-direction: column;
 height: 100%;
-transition: all 0.5s ease;
+opacity: 0;
+transition: opacity 0.5s ease-in-out;
 }
 
-.chat-area.active {
+.chat-interface.active {
+display: flex;
 opacity: 1;
 }
 
 .chat-header {
-background: rgba(127, 0, 255, 0.1);
-padding: 1.5rem 2rem;
+padding: 1rem 1.5rem;
 border-bottom: 1px solid var(--border);
 display: flex;
 justify-content: space-between;
 align-items: center;
+flex-shrink: 0;
 }
 
 .chat-title {
-font-size: 1.4rem;
+font-size: 1.5rem;
 font-weight: 700;
 background: linear-gradient(135deg, var(--primary), var(--secondary));
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 }
 
-.settings-btn {
+.icon-btn {
 background: none;
 border: none;
-color: var(--text-primary);
+color: var(--text-secondary);
 font-size: 1.5rem;
 cursor: pointer;
 padding: 0.5rem;
-border-radius: 8px;
+border-radius: 50%;
+width: 44px;
+height: 44px;
+display: flex;
+align-items: center;
+justify-content: center;
 transition: all 0.3s ease;
 }
 
-.settings-btn:hover {
+.icon-btn:hover {
 background: rgba(255, 255, 255, 0.1);
+color: var(--text-primary);
 }
 
 .chat-messages {
-height: calc(100% - 140px);
+flex-grow: 1;
 overflow-y: auto;
-padding: 2rem;
+padding: 1.5rem;
+display: flex;
+flex-direction: column;
+gap: 1.25rem;
+}
+
+.message {
+display: flex;
+max-width: 80%;
+animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+from { opacity: 0; transform: translateY(10px) scale(0.98); }
+to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.message-content {
+padding: 0.8rem 1.2rem;
+border-radius: 18px;
+line-height: 1.6;
+}
+
+.user-message {
+align-self: flex-end;
+}
+
+.user-message .message-content {
+background: linear-gradient(135deg, var(--primary), var(--secondary));
+color: white;
+border-bottom-right-radius: 4px;
+}
+
+.ai-message {
+align-self: flex-start;
+}
+
+.ai-message .message-content {
+background: var(--surface);
+color: var(--text-primary);
+border: 1px solid var(--border);
+border-bottom-left-radius: 4px;
+}
+
+.thinking-indicator {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.thinking-animation {
+width: 24px;
+height: 24px;
+position: relative;
+}
+
+.thinking-animation::before,
+.thinking-animation::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+border-radius: 50%;
+border: 2px solid transparent;
+border-top-color: var(--primary);
+border-right-color: var(--secondary);
+animation: spin 1s linear infinite;
+}
+
+.thinking-animation::after {
+animation-delay: -0.5s;
+}
+
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+
+.chat-input-area {
+padding: 1rem 1.5rem;
+border-top: 1px solid var(--border);
+flex-shrink: 0;
+}
+
+.input-wrapper {
+display: flex;
+gap: 0.75rem;
+align-items: center;
+background: rgba(0, 0, 0, 0.2);
+border: 1px solid var(--border);
+border-radius: 18px;
+padding: 0.5rem;
+transition: border-color 0.3s;
+}
+.input-wrapper:focus-within {
+border-color: var(--primary);
+}
+
+#messageInput {
+flex: 1;
+background: transparent;
+border: none;
+color: var(--text-primary);
+font-size: 1rem;
+resize: none;
+height: 48px;
+padding: 14px;
+max-height: 120px;
+}
+
+#messageInput:focus {
+outline: none;
+}
+
+#sendButton {
+width: 40px;
+height: 40px;
+border-radius: 14px;
+background: linear-gradient(135deg, var(--primary), var(--secondary));
+color: white;
+font-size: 1.5rem;
+}
+#sendButton:hover {
+transform: scale(1.05);
+}
+
+.settings-modal {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.6);
+backdrop-filter: blur(10px);
+z-index: 1000;
+display: flex;
+align-items: center;
+justify-content: center;
+opacity: 0;
+visibility: hidden;
+transition: opacity 0.3s ease, visibility 0s 0.3s;
+}
+.settings-modal.active {
+opacity: 1;
+visibility: visible;
+transition: opacity 0.3s ease;
+}
+
+.settings-panel {
+width: 90%;
+max-width: 500px;
+transform: scale(0.95);
+transition: transform 0.3s ease;
+}
+.settings-modal.active .settings-panel {
+transform: scale(1);
+}
+
+.settings-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 1.5rem;
+border-bottom: 1px solid var(--border);
+}
+
+.settings-title {
+font-size: 1.6rem;
+font-weight: 700;
+}
+
+.settings-content {
+padding: 1.5rem;
 display: flex;
 flex-direction: column;
 gap: 1.5rem;
 }
 
-.message {
-max-width: 70%;
-padding: 1.25rem 1.5rem;
-border-radius: 18px;
-line-height: 1.6;
-animation: messageSlide 0.3s ease;
+.setting-group label {
+display: block;
+margin-bottom: 0.75rem;
+font-weight: 500;
 }
 
-@keyframes messageSlide {
-from {
-opacity: 0;
-transform: translateY(10px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
+.setting-group a {
+color: var(--primary);
+text-decoration: none;
+font-size: 0.9rem;
+margin-top: 0.5rem;
+display: inline-block;
 }
 
-.user-message {
-background: linear-gradient(135deg, var(--primary), var(--primary-light));
-color: white;
-align-self: flex-end;
-}
-
-.ai-message {
-background: var(--surface-light);
-color: var(--text-primary);
-align-self: flex-start;
+#themeSelect {
+width: 100%;
+background: rgba(0, 0, 0, 0.2);
 border: 1px solid var(--border);
-}
-
-.thinking-animation {
-display: flex;
-align-items: center;
-gap: 12px;
-padding: 1rem 0;
-}
-
-.thinking-dots {
-display: flex;
-gap: 6px;
-}
-
-.thinking-dot {
-width: 8px;
-height: 8px;
-border-radius: 50%;
-background: linear-gradient(135deg, var(--primary), var(--secondary));
-animation: thinkingWave 1.8s ease-in-out infinite both;
-}
-
-.thinking-dot:nth-child(1) { animation-delay: 0s; }
-.thinking-dot:nth-child(2) { animation-delay: 0.2s; }
-.thinking-dot:nth-child(3) { animation-delay: 0.4s; }
-.thinking-dot:nth-child(4) { animation-delay: 0.6s; }
-
-@keyframes thinkingWave {
-0%, 60%, 100% {
-transform: scale(0.8);
-opacity: 0.5;
-}
-30% {
-transform: scale(1.2);
-opacity: 1;
-}
-}
-
-.chat-input-container {
-padding: 1.5rem 2rem;
-border-top: 1px solid var(--border);
-background: rgba(26, 26, 26, 0.6);
-}
-
-.chat-input-wrapper {
-display: flex;
-gap: 1rem;
-align-items: flex-end;
-}
-
-.message-input {
-flex: 1;
-background: rgba(255, 255, 255, 0.08);
-border: 1.5px solid var(--border);
-border-radius: 16px;
-padding: 1.25rem 1.5rem;
+border-radius: 14px;
+padding: 0.8rem 1rem;
 color: var(--text-primary);
 font-size: 1rem;
-resize: none;
-min-height: 56px;
-max-height: 120px;
-transition: all 0.3s ease;
+cursor: pointer;
 }
-
-.message-input:focus {
+#themeSelect:focus {
 outline: none;
 border-color: var(--primary);
-background: rgba(255, 255, 255, 0.12);
-}
-
-.send-btn {
-background: linear-gradient(135deg, var(--primary), var(--primary-light));
-color: white;
-border: none;
-padding: 1rem 1.25rem;
-border-radius: 12px;
-cursor: pointer;
-transition: all 0.3s ease;
-font-size: 1.2rem;
-min-width: 56px;
-height: 56px;
-display: flex;
-align-items: center;
-justify-content: center;
-}
-
-.send-btn:hover {
-transform: translateY(-2px);
 }
 </style>
 </head>
-<body>
-<div class="chat-container glass">
-<div class="auth-box glass">
-<h2>Prysmis AI</h2>
-<p class="subtitle">Enter your invite code to access the chat</p>
+<body data-theme="dark">
 
-<div class="input-group">
-<input type="text" id="inviteCode" placeholder="enter invite code to access." class="code-input">
-<button id="submitCode" class="submit-btn">Access Chat</button>
+<div class="container glass">
+    <div class="auth-box" id="authBox">
+        <h1>Prysmis AI</h1>
+        <p>Enter the invite code to begin your journey.</p>
+        <input type="text" id="inviteCodeInput" class="input-field" placeholder="Your Invite Code">
+        <button id="submitCodeBtn" class="action-btn">Unlock Chat</button>
+        <div id="errorMessage" class="error-msg"></div>
+    </div>
+
+    <div class="chat-interface" id="chatInterface">
+        <div class="chat-header">
+            <div class="chat-title">Prysmis</div>
+            <button class="icon-btn" id="settingsBtn" title="Settings">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <div class="input-wrapper" id="inputWrapper">
+                <textarea id="messageInput" placeholder="Message Prysmis AI..." rows="1"></textarea>
+                <button class="icon-btn" id="sendButton" title="Send">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div id="errorMessage" class="error-message"></div>
+<div class="settings-modal" id="settingsModal">
+    <div class="settings-panel glass">
+        <div class="settings-header">
+            <div class="settings-title">Settings</div>
+            <button class="icon-btn" id="closeSettingsBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="settings-content">
+            <div class="setting-group">
+                <label for="apiKeyInput">Gemini API Key</label>
+                <input type="password" id="apiKeyInput" class="input-field" placeholder="Enter your Gemini API key">
+                <a href="https://aistudio.google.com/app/apikey" target="_blank">Get your Gemini API Key here</a>
+            </div>
+            <div class="setting-group">
+                <label for="themeSelect">Theme</label>
+                <select id="themeSelect" class="input-field">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                </select>
+            </div>
+            <button id="saveSettingsBtn" class="action-btn">Save & Close</button>
+        </div>
+    </div>
 </div>
 
-<div class="chat-area glass" id="chatArea">
-<div class="chat-header">
-<div class="chat-title">Prysmis AI</div>
-<button class="settings-btn" id="settingsButton">⚙️</button>
-</div>
+<script type="module">
+    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-<div class="chat-messages" id="chatMessages"></div>
+    document.addEventListener('DOMContentLoaded', () => {
+        const INVITE_CODE = "PRYSMIS-FLASHPASS-77";
 
-<div class="chat-input-container">
-<div class="chat-input-wrapper">
-<textarea
-id="messageInput"
-class="message-input"
-placeholder="ask prysmis ai anything or use / commands"
-rows="1"
-></textarea>
-<button id="sendButton" class="send-btn">➤</button>
-</div>
-</div>
-</div>
-</div>
+        const DOMElements = {
+            authBox: document.getElementById('authBox'),
+            inviteCodeInput: document.getElementById('inviteCodeInput'),
+            submitCodeBtn: document.getElementById('submitCodeBtn'),
+            errorMessage: document.getElementById('errorMessage'),
+            chatInterface: document.getElementById('chatInterface'),
+            chatMessages: document.getElementById('chatMessages'),
+            messageInput: document.getElementById('messageInput'),
+            sendButton: document.getElementById('sendButton'),
+            settingsBtn: document.getElementById('settingsBtn'),
+            settingsModal: document.getElementById('settingsModal'),
+            closeSettingsBtn: document.getElementById('closeSettingsBtn'),
+            saveSettingsBtn: document.getElementById('saveSettingsBtn'),
+            apiKeyInput: document.getElementById('apiKeyInput'),
+            themeSelect: document.getElementById('themeSelect'),
+            body: document.body
+        };
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-const authBox = document.querySelector('.auth-box');
-const inviteCodeInput = document.getElementById('inviteCode');
-const submitButton = document.getElementById('submitCode');
-const errorMessage = document.getElementById('errorMessage');
-const chatArea = document.getElementById('chatArea');
-const chatMessages = document.getElementById('chatMessages');
-const messageInput = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
+        let apiKey = '';
+        let genAI;
+        let chat;
 
-// Hardcoded invite code
-const correctInviteCode = 'prysmisfromowner$';
+        const loadSettings = () => {
+            const savedApiKey = localStorage.getItem('prysmis_api_key') || '';
+            const savedTheme = localStorage.getItem('prysmis_theme') || 'dark';
 
-function validateInviteCode(code) {
-return code === correctInviteCode;
-}
+            apiKey = savedApiKey;
+            DOMElements.apiKeyInput.value = savedApiKey;
+            DOMElements.themeSelect.value = savedTheme;
+            setTheme(savedTheme);
 
-function showError(message) {
-errorMessage.textContent = message;
-errorMessage.classList.add('show');
-setTimeout(() => {
-errorMessage.classList.remove('show');
-}, 3000);
-}
+            if (apiKey) {
+                initializeAI();
+            }
+        };
 
-function showChatArea() {
-authBox.style.opacity = '0';
-authBox.style.transform = 'translateY(20px)';
+        const saveSettings = () => {
+            apiKey = DOMElements.apiKeyInput.value.trim();
+            const theme = DOMElements.themeSelect.value;
 
-setTimeout(() => {
-authBox.style.display = 'none';
-chatArea.style.display = 'block';
-setTimeout(() => {
-chatArea.classList.add('active');
-addAIMessage("Hello! I'm Prysmis AI. How can I assist you today? 🚀");
-}, 300);
-}, 500);
-}
+            if (apiKey) {
+                localStorage.setItem('prysmis_api_key', apiKey);
+                initializeAI();
+            }
+            localStorage.setItem('prysmis_theme', theme);
+            setTheme(theme);
+            toggleSettingsModal();
+        };
+        
+        const initializeAI = () => {
+            try {
+                genAI = new GoogleGenerativeAI(apiKey);
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+                chat = model.startChat({ history: [] });
+            } catch (error) {
+                console.error("AI Initialization Error:", error);
+                showError('Invalid API Key or initialization failed.');
+            }
+        };
 
-function handleInviteSubmit() {
-const enteredCode = inviteCodeInput.value.trim();
+        const setTheme = (theme) => {
+            DOMElements.body.setAttribute('data-theme', theme);
+        };
 
-if (!enteredCode) {
-showError('Please enter an invite code');
-return;
-}
+        const showError = (message) => {
+            DOMElements.errorMessage.textContent = message;
+            DOMElements.errorMessage.classList.add('show');
+            setTimeout(() => DOMElements.errorMessage.classList.remove('show'), 3000);
+        };
 
-if (validateInviteCode(enteredCode)) {
-errorMessage.textContent = '';
-errorMessage.classList.remove('show');
-showChatArea();
-} else {
-showError('Invalid invite code. Please try again.');
-}
-}
+        const handleInviteSubmit = () => {
+            if (DOMElements.inviteCodeInput.value.trim() === INVITE_CODE) {
+                DOMElements.authBox.style.display = 'none';
+                DOMElements.chatInterface.classList.add('active');
+                addMessage('Prysmis AI is online. How can I help you today?', 'ai');
+                if(!apiKey) {
+                    setTimeout(() => addMessage("Please enter your Gemini API key in the settings (⚙️) to begin.", 'ai'), 500);
+                }
+            } else {
+                showError('Invalid invite code. Please try again.');
+            }
+        };
+        
+        const addMessage = (text, sender, isStreaming = false) => {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `message ${sender}-message`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
 
-function addAIMessage(text) {
-const messageDiv = document.createElement('div');
-messageDiv.className = 'message ai-message';
+            if (sender === 'ai' && isStreaming) {
+                const thinkingIndicator = document.createElement('div');
+                thinkingIndicator.className = 'thinking-indicator';
+                thinkingIndicator.innerHTML = '<div class="thinking-animation"></div>';
+                messageContent.appendChild(thinkingIndicator);
+            } else {
+                messageContent.textContent = text;
+            }
 
-const thinkingDiv = document.createElement('div');
-thinkingDiv.className = 'thinking-animation';
-thinkingDiv.innerHTML = `
-<div class="thinking-dots">
-<div class="thinking-dot"></div>
-<div class="thinking-dot"></div>
-<div class="thinking-dot"></div>
-<div class="thinking-dot"></div>
-</div>
-`;
+            messageWrapper.appendChild(messageContent);
+            DOMElements.chatMessages.appendChild(messageWrapper);
+            DOMElements.chatMessages.scrollTop = DOMElements.chatMessages.scrollHeight;
+            return messageContent;
+        };
 
-messageDiv.appendChild(thinkingDiv);
-chatMessages.appendChild(messageDiv);
-chatMessages.scrollTop = chatMessages.scrollHeight;
+        const sendMessage = async () => {
+            const userInput = DOMElements.messageInput.value.trim();
+            if (!userInput) return;
+            
+            if (!apiKey || !chat) {
+                addMessage("Please set your Gemini API key in the settings (⚙️) first.", 'ai');
+                return;
+            }
 
-setTimeout(() => {
-thinkingDiv.remove();
-const messageContent = document.createElement('div');
-messageContent.textContent = text;
-messageDiv.appendChild(messageContent);
-chatMessages.scrollTop = chatMessages.scrollHeight;
-}, 2000);
-}
+            addMessage(userInput, 'user');
+            DOMElements.messageInput.value = '';
+            autoResizeTextarea();
+            
+            const aiMessageElement = addMessage('', 'ai', true);
+            
+            try {
+                const result = await chat.sendMessageStream(userInput);
+                let responseText = '';
+                const thinkingIndicator = aiMessageElement.querySelector('.thinking-indicator');
+                if (thinkingIndicator) thinkingIndicator.remove();
 
-function addUserMessage(text) {
-const messageDiv = document.createElement('div');
-messageDiv.className = 'message user-message';
-messageDiv.textContent = text;
-chatMessages.appendChild(messageDiv);
-chatMessages.scrollTop = chatMessages.scrollHeight;
-}
+                for await (const chunk of result.stream) {
+                    const chunkText = chunk.text();
+                    responseText += chunkText;
+                    aiMessageElement.textContent = responseText;
+                    DOMElements.chatMessages.scrollTop = DOMElements.chatMessages.scrollHeight;
+                }
+            } catch (error) {
+                 const thinkingIndicator = aiMessageElement.querySelector('.thinking-indicator');
+                if (thinkingIndicator) thinkingIndicator.remove();
+                aiMessageElement.textContent = "Sorry, I encountered an error. Please check your API key or try again.";
+                console.error("Gemini API Error:", error);
+            }
+        };
+        
+        const autoResizeTextarea = () => {
+            const textarea = DOMElements.messageInput;
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        };
 
-function sendMessage() {
-const message = messageInput.value.trim();
-if (message) {
-addUserMessage(message);
-messageInput.value = '';
+        const toggleSettingsModal = () => {
+            DOMElements.settingsModal.classList.toggle('active');
+        };
 
-setTimeout(() => {
-const responses = [
-"I understand! How can I help you further?",
-"That's interesting! What would you like to know?",
-"Great question! Let me assist you with that.",
-"I appreciate your message! How can I help?",
-"Fascinating! What else would you like to discuss?"
-];
-const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-addAIMessage(randomResponse);
-}, 1000);
-}
-}
+        DOMElements.submitCodeBtn.addEventListener('click', handleInviteSubmit);
+        DOMElements.inviteCodeInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleInviteSubmit());
+        
+        DOMElements.sendButton.addEventListener('click', sendMessage);
+        DOMElements.messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
 
-// Event listeners
-inviteCodeInput.addEventListener('keypress', function(e) {
-if (e.key === 'Enter') handleInviteSubmit();
-});
+        DOMElements.messageInput.addEventListener('input', autoResizeTextarea);
+        
+        DOMElements.settingsBtn.addEventListener('click', toggleSettingsModal);
+        DOMElements.closeSettingsBtn.addEventListener('click', toggleSettingsModal);
+        DOMElements.settingsModal.addEventListener('click', (e) => e.target === DOMElements.settingsModal && toggleSettingsModal());
+        DOMElements.saveSettingsBtn.addEventListener('click', saveSettings);
 
-submitButton.addEventListener('click', handleInviteSubmit);
-sendButton.addEventListener('click', sendMessage);
-
-messageInput.addEventListener('keypress', function(e) {
-if (e.key === 'Enter' && !e.shiftKey) {
-e.preventDefault();
-sendMessage();
-}
-});
-
-messageInput.addEventListener('input', function() {
-this.style.height = 'auto';
-this.style.height = (this.scrollHeight) + 'px';
-});
-
-inviteCodeInput.focus();
-});
+        loadSettings();
+    });
 </script>
 </body>
 </html>
