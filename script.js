@@ -9,5 +9,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const hero = document.getElementById('hero');
         if (hero) hero.classList.add('show');
-    }, 70);
+    }, 80);
 });
