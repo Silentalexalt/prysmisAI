@@ -19,6 +19,74 @@
 
 <div id="errorMessage" class="error-message"></div>
 </div>
+
+<div class="chat-area" id="chatArea">
+<div class="chat-header">
+<div class="chat-title">Prysmis AI</div>
+<button class="settings-btn" id="settingsButton">⚙️</button>
+</div>
+
+<div class="chat-messages" id="chatMessages"></div>
+
+<div class="chat-input-container">
+<div class="chat-input-wrapper">
+<textarea
+id="messageInput"
+class="message-input"
+placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
+rows="1"
+></textarea>
+<button id="sendButton" class="send-btn">➤</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="settings-ui" id="settingsUI">
+<div class="settings-sidebar">
+<button class="settings-tab" id="userSettingsBtn">User Settings</button>
+<button class="settings-tab active" id="aiSettingsBtn">AI Settings</button>
+</div>
+
+<div class="settings-content">
+<div class="settings-header">
+<div class="settings-title">Settings</div>
+<button class="close-settings" id="closeSettings">✕</button>
+</div>
+
+<div class="settings-page active" id="aiSettingsPage">
+<div class="setting-group">
+<label class="setting-label">Enter your Gemini API key here</label>
+<input type="password" id="apiKeyInput" class="api-key-input" placeholder="Enter your API key">
+<a href="#" id="generateApiKeyLink" class="generate-link">click here directly to generate your Gemini api key</a>
+</div>
+
+<div class="setting-group">
+<label class="setting-label">Enable AI response speed</label>
+<label class="toggle-switch">
+<input type="checkbox" id="speedToggle" checked>
+<span class="toggle-slider"></span>
+</label>
+</div>
+</div>
+
+<div class="settings-page" id="userSettingsPage">
+<div class="setting-group">
+<label class="setting-label">Your Display Name</label>
+<input type="text" id="userNameInput" class="api-key-input" placeholder="Enter your name">
+</div>
+
+<div class="setting-group">
+<label class="setting-label">Website Theme</label>
+<select id="themeSelect" class="theme-select">
+<option value="dark">Dark Mode</option>
+<option value="light">Light Mode</option>
+</select>
+</div>
+</div>
+
+<button id="saveSettings" class="save-settings-btn">Save Settings</button>
+</div>
 </div>
 
 <script src="script.js"></script>
