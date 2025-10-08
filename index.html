@@ -30,7 +30,6 @@ font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Hel
 
 html {
 scroll-behavior: smooth;
-scroll-snap-type: y proximity;
 }
 
 body {
@@ -162,64 +161,37 @@ width: 90%;
 display: flex;
 justify-content: space-between;
 align-items: center;
-padding: 1rem 2rem;
-background-color: rgba(20, 20, 20, 0.98);
-backdrop-filter: blur(25px);
-z-index: 1000;
-border: 1px solid rgba(255, 255, 255, 0.25);
-border-radius: 16px;
-box-shadow: 0 10px 50px rgba(0, 0, 0, 0.9);
-animation: slideUp 0.8s ease-out 0.5s both;
+padding: 0.75rem 2rem;
+background-color: rgba(26, 26, 26, 0.9);
+backdrop-filter: blur(12px);
+z-index: 50;
+border: 1px solid rgba(255, 255, 255, 0.15);
+border-radius: 12px;
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
 }
 
 .logo {
-font-size: 1.6rem;
+font-size: 1.5rem;
 font-weight: 700;
 color: var(--white);
-background: linear-gradient(to right, var(--purple), var(--white));
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-text-shadow: 0 0 15px rgba(127, 0, 255, 0.4);
-}
-
-#navbar nav {
-display: flex;
-gap: 2rem;
 }
 
 #navbar a {
 color: var(--white);
 text-decoration: none;
-font-weight: 600;
-padding: 0.6rem 1.2rem;
-border-radius: 10px;
+font-weight: 500;
+margin-left: 1.5rem;
+padding: 0.5rem 1rem;
+border-radius: 6px;
 transition: all var(--transition-duration) ease-in-out;
 white-space: nowrap;
-position: relative;
-overflow: hidden;
-font-size: 1rem;
-}
-
-#navbar a::before {
-content: '';
-position: absolute;
-top: 0;
-left: -100%;
-width: 100%;
-height: 100%;
-background: linear-gradient(90deg, transparent, rgba(127, 0, 255, 0.5), transparent);
-transition: left 0.5s;
-}
-
-#navbar a:hover::before {
-left: 100%;
 }
 
 #navbar a:hover {
 color: var(--white);
 background-color: var(--purple);
-transform: translateY(-3px);
-box-shadow: 0 6px 20px rgba(127, 0, 255, 0.5);
+transform: translateY(-2px);
+box-shadow: 0 2px 10px rgba(127, 0, 255, 0.4);
 }
 
 #hero-section {
@@ -486,17 +458,11 @@ display: none;
 #navbar {
 top: 1rem;
 width: 95%;
-padding: 0.8rem 1.5rem;
+padding: 0.75rem 1.25rem;
 }
 
 #navbar nav {
-display: flex;
-gap: 1rem;
-}
-
-#navbar a {
-padding: 0.5rem 1rem;
-font-size: 0.9rem;
+display: none;
 }
 
 #hero-section {
@@ -532,17 +498,6 @@ padding: 2rem;
 }
 
 @media (max-width: 480px) {
-#navbar {
-flex-direction: column;
-gap: 1rem;
-padding: 1rem;
-}
-
-#navbar nav {
-width: 100%;
-justify-content: center;
-}
-
 .hero-tagline {
 font-size: 1.8rem;
 }
