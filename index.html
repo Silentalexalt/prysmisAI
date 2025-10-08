@@ -37,10 +37,42 @@ overflow-x: hidden;
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 position: relative;
+cursor: none;
 }
 
 html {
 scroll-behavior: smooth;
+}
+
+body::-webkit-scrollbar {
+width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+background: transparent;
+margin: 10px 0;
+}
+
+body::-webkit-scrollbar-thumb {
+background: linear-gradient(to bottom, var(--purple), var(--purple-light));
+border-radius: 10px;
+border: 3px solid var(--black);
+}
+
+body::-webkit-scrollbar-thumb:hover {
+background: linear-gradient(to bottom, var(--purple-light), var(--purple));
+}
+
+#cursor-light {
+position: fixed;
+width: 300px;
+height: 300px;
+background: radial-gradient(circle, rgba(127, 0, 255, 0.15) 0%, transparent 70%);
+border-radius: 50%;
+pointer-events: none;
+z-index: 9999;
+transform: translate(-50%, -50%);
+transition: transform 0.1s ease;
 }
 
 #loading-overlay {
@@ -79,20 +111,15 @@ z-index: 10;
 text-shadow: 0 0 20px rgba(127, 0, 255, 0.5);
 }
 
-@keyframes fadeIn {
-0% { opacity: 0; }
-100% { opacity: 1; }
-}
-
 @keyframes slideUp {
 0% { transform: translateY(30px); opacity: 0; }
 100% { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes pulse {
-0% { box-shadow: 0 0 0 0 rgba(127, 0, 255, 0.7); }
-70% { box-shadow: 0 0 0 10px rgba(127, 0, 255, 0); }
-100% { box-shadow: 0 0 0 0 rgba(127, 0, 255, 0); }
+0% { box-shadow: 0 0 0 0 rgba(127, 0, 255, 0.7), 0 0 20px 10px rgba(127, 0, 255, 0.4); }
+70% { box-shadow: 0 0 0 15px rgba(127, 0, 255, 0), 0 0 25px 15px rgba(127, 0, 255, 0.6); }
+100% { box-shadow: 0 0 0 0 rgba(127, 0, 255, 0), 0 0 20px 10px rgba(127, 0, 255, 0.4); }
 }
 
 @keyframes float {
@@ -105,6 +132,12 @@ text-shadow: 0 0 20px rgba(127, 0, 255, 0.5);
 0% { box-shadow: 0 0 5px rgba(127, 0, 255, 0.5); }
 50% { box-shadow: 0 0 20px rgba(127, 0, 255, 0.8); }
 100% { box-shadow: 0 0 5px rgba(127, 0, 255, 0.5); }
+}
+
+@keyframes bounce {
+0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+40% { transform: translateY(-10px); }
+60% { transform: translateY(-5px); }
 }
 
 #navbar, #main-content {
@@ -124,12 +157,12 @@ display: flex;
 justify-content: space-between;
 align-items: center;
 padding: 0.75rem 2rem;
-background-color: rgba(26, 26, 26, 0.9);
-backdrop-filter: blur(12px);
+background-color: rgba(26, 26, 26, 0.95);
+backdrop-filter: blur(20px);
 z-index: 50;
-border: 1px solid rgba(255, 255, 255, 0.15);
-border-radius: 12px;
-box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 16px;
+box-shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
 animation: slideUp 0.8s ease-out 0.5s both;
 }
 
@@ -153,7 +186,7 @@ color: var(--white);
 text-decoration: none;
 font-weight: 500;
 padding: 0.5rem 1rem;
-border-radius: 6px;
+border-radius: 8px;
 transition: all var(--transition-duration) ease-in-out;
 white-space: nowrap;
 position: relative;
@@ -179,7 +212,7 @@ left: 100%;
 color: var(--white);
 background-color: var(--purple);
 transform: translateY(-2px);
-box-shadow: 0 2px 10px rgba(127, 0, 255, 0.4);
+box-shadow: 0 4px 15px rgba(127, 0, 255, 0.4);
 }
 
 #hero-section {
@@ -225,35 +258,38 @@ transform: translateY(0);
 }
 
 .hero-tagline {
-font-size: clamp(1.8rem, 3.5vw, 3rem);
+font-size: clamp(2rem, 4vw, 4rem);
 font-weight: 300;
-margin-bottom: 2rem;
+margin-bottom: 1rem;
 color: var(--white);
-line-height: 1.2;
+line-height: 1.1;
 text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.hero-tagline span {
+.hero-tagline .prysmis {
+font-size: clamp(2.5rem, 5vw, 5rem);
+font-weight: 700;
 background: linear-gradient(to right, var(--purple), var(--white));
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
-font-weight: 600;
+display: block;
+margin-top: 0.5rem;
 }
 
 .cta-button {
 background: linear-gradient(45deg, var(--purple), var(--purple-light));
 color: var(--white);
 border: none;
-padding: 0.85rem 2.5rem;
-font-size: 1.1rem;
+padding: 1rem 3rem;
+font-size: 1.2rem;
 font-weight: 600;
 cursor: pointer;
-border-radius: 8px;
-box-shadow: 0 4px 20px rgba(127, 0, 255, 0.5);
-transition: background-color var(--animation-duration), transform var(--animation-duration), box-shadow var(--animation-duration);
+border-radius: 12px;
+transition: all var(--animation-duration);
 position: relative;
 overflow: hidden;
-animation: pulse 2s infinite 1.5s, glow 3s infinite;
+animation: pulse 2s infinite 1.5s;
+margin-top: 2rem;
 }
 
 .cta-button::before {
@@ -263,8 +299,8 @@ top: 0;
 left: -100%;
 width: 100%;
 height: 100%;
-background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-transition: left 0.5s;
+background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+transition: left 0.7s;
 }
 
 .cta-button:hover::before {
@@ -272,9 +308,9 @@ left: 100%;
 }
 
 .cta-button:hover {
-transform: translateY(-3px) scale(1.02);
-box-shadow: 0 8px 25px rgba(127, 0, 255, 0.8);
+transform: translateY(-3px) scale(1.05);
 animation: none;
+box-shadow: 0 0 30px 15px rgba(127, 0, 255, 0.6);
 }
 
 #features-section {
@@ -322,12 +358,6 @@ color: var(--white);
 font-size: 1.5rem;
 margin-left: 0.5rem;
 animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-40% { transform: translateY(-10px); }
-60% { transform: translateY(-5px); }
 }
 
 .feature-grid {
@@ -442,6 +472,14 @@ z-index: 1;
 }
 
 @media (max-width: 768px) {
+body {
+cursor: auto;
+}
+
+#cursor-light {
+display: none;
+}
+
 #navbar {
 top: 1rem;
 width: 95%;
@@ -489,6 +527,31 @@ footer {
 padding: 2rem;
 }
 }
+
+@media (max-width: 480px) {
+#navbar {
+flex-direction: column;
+gap: 1rem;
+padding: 1rem;
+}
+
+#navbar nav {
+width: 100%;
+justify-content: center;
+}
+
+.hero-tagline {
+font-size: 1.8rem;
+}
+
+.hero-tagline .prysmis {
+font-size: 2.2rem;
+}
+
+.feature-grid {
+grid-template-columns: 1fr;
+}
+}
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -497,7 +560,15 @@ const mainContent = document.getElementById('main-content');
 const navbar = document.getElementById('navbar');
 const ctaButton = document.querySelector('.cta-button');
 
-// Create floating particles for visual effect
+const cursorLight = document.createElement('div');
+cursorLight.id = 'cursor-light';
+document.body.appendChild(cursorLight);
+
+document.addEventListener('mousemove', (e) => {
+cursorLight.style.left = e.clientX + 'px';
+cursorLight.style.top = e.clientY + 'px';
+});
+
 function createParticles() {
 const particlesContainer = document.createElement('div');
 particlesContainer.id = 'particles-container';
@@ -507,11 +578,9 @@ for (let i = 0; i < 20; i++) {
 const particle = document.createElement('div');
 particle.classList.add('floating-particle');
 
-// Random position
 particle.style.left = `${Math.random() * 100}%`;
 particle.style.top = `${Math.random() * 100}%`;
 
-// Random animation delay and duration
 particle.style.animationDelay = `${Math.random() * 5}s`;
 particle.style.animationDuration = `${5 + Math.random() * 5}s`;
 
@@ -544,7 +613,6 @@ link.addEventListener('click', (e) => {
 if (link.getAttribute('href').startsWith('#')) {
 if (link.getAttribute('href') === '#') {
 e.preventDefault();
-console.log('Docs link clicked!');
 return;
 }
 e.preventDefault();
@@ -580,7 +648,10 @@ startAnimation();
 <main id="main-content">
 <section id="hero-section">
 <div class="hero-content">
-<h2 class="hero-tagline">Expect the speed from prysmis.</h2>
+<h2 class="hero-tagline">
+Expect the speed from
+<span class="prysmis">prysmis.</span>
+</h2>
 <button class="cta-button">Use Prysmis Now.</button>
 </div>
 </section>
@@ -615,7 +686,5 @@ startAnimation();
 <footer>
 <p>© 2025 Prysmis AI. All rights reserved.</p>
 </footer>
-
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"01ed169078be4757b01304024aecda34","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
