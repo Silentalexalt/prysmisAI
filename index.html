@@ -3,52 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prysmis Chat</title>
+    <title>Prysmis Chat #1 - AI</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="nav">
-            <div class="nav-logo">Prysmis Chat</div>
-            <nav>
-                <button onclick="scrollToSection('features')">Features</button>
-                <button onclick="window.open('https://docs.google.com/document/d/1XyL5M8O_D5uA2T9J4R3C6Q7Z8V0W4S1H5J6I2K3E0Y0/edit?usp=sharing', '_blank')">Docs</button>
-            </nav>
-        </div>
+    <div id="loading-overlay">
+        <h1 id="welcome-text" class="text-animation">Welcome.</h1>
+    </div>
+
+    <header id="navbar">
+        <span class="logo">Prysmis :)</span>
+        <nav>
+            <a href="#features-section">features</a>
+            <a href="#">Docs</a>
+        </nav>
     </header>
-    <main>
-        <section id="hero">
-            <div class="hero-inner">
-                <h1>Expect the speed from Prysmis.</h1>
-                <a href="/chatarea" class="cta">Use Prysmis now &rarr;</a>
+
+    <main id="main-content" class="hidden">
+        <section id="hero-section">
+            <div class="hero-content">
+                <h2 class="hero-tagline">Expect the speed from prysmis.</h2>
+                <button class="cta-button">Use Prysmis Now.</button>
             </div>
         </section>
-        <section id="features">
-            <h2>Core Capabilities</h2>
-            <div class="features-list">
-                <div class="feature">
-                    <h3>Youtube features:</h3>
+
+        <section id="features-section" class="scroll-section">
+            <h3 class="section-title">Features of prysmis ai. <span class="down-arrow">↓</span></h3>
+            <div class="feature-grid">
+                <div class="feature-box">
+                    <h4>Youtube Features:</h4>
                     <ul>
-                        <li><span class="dot">•</span>able to skip ads of your youtube video</li>
-                        <li><span class="dot">•</span>able to manipulate youtube sound video with your words</li>
-                        <li><span class="dot">•</span>able to analysis youtube videos (<span class="note">not accurate for rn</span>)</li>
+                        <li>able to skip ads of what you're watching.</li>
+                        <li>able to manipulate youtube sound videos with your words/ % suggestion</li>
+                        <li>able to analysis youtube videos (not very accurate for rn)</li>
                     </ul>
                 </div>
-                <div class="feature">
-                    <h3>Universal theme toggler:</h3>
+                <div class="feature-box">
+                    <h4>Universal theme toggler:</h4>
                     <ul>
-                        <li><span class="dot">•</span>able to unviersally change any websites to dark mode or light mode.</li>
+                        <li>Able to universally change any websites to dark mode or light mode.</li>
                     </ul>
                 </div>
-                <div class="feature">
-                    <h3>More features to come:</h3>
+                <div class="feature-box">
+                    <h4>More features:</h4>
                     <ul>
-                        <li><span class="dot">•</span>either type "what are your features?" OR use the command "/features" to list down the features in the <span class="plain">bookmarklet ui of the Prysmis</span>.</li>
+                        <li>either type <span class="purple-text">"What are your features?"</span> or use the command <span class="purple-text">"/features"</span> to list down the features for the website version and the bookmarklet version.</li>
                     </ul>
                 </div>
             </div>
         </section>
     </main>
+
     <script src="script.js"></script>
 </body>
 </html>
