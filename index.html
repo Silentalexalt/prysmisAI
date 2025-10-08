@@ -77,10 +77,11 @@
             transition: all 0.8s ease-out; /* Faster fade out */
         }
 
-        /* --- Main Content and Navbar Initial State --- */
+        /* --- Main Content and Navbar Initial State (CRITICAL: added pointer-events: none) --- */
         #navbar, #main-content {
             opacity: 0;
             transition: opacity 1s ease-in-out;
+            pointer-events: none; /* Prevents interaction/covering of the loading screen */
         }
 
         /* --- Floating Navbar Style --- */
@@ -286,52 +287,57 @@
             const navbar = document.getElementById('navbar');
             const ctaButton = document.querySelector('.cta-button');
 
+            // Using descriptive variables for text
             const initialText = "Welcome.";
             const secondText = "To Prysmis.";
 
             const startAnimation = () => {
-                const DELAY = 100; // Initial short delay
-                const TEXT_IN_DURATION = 1200; // CSS: 1.2s
-                const TEXT_OUT_DURATION = 800; // CSS: 0.8s
-                const OVERLAY_FADE_DURATION = 1700; // Match CSS 1.5s + buffer
+                // Defined time steps for smooth, sequential animation
+                const STEP_1_WELCOME_IN = 100;    // Start welcome text
+                const STEP_2_WELCOME_OUT = 1600;  // Start welcome text fade out (1.5s display)
+                const STEP_3_PRYSMIS_IN = 2600;   // Swap text and fade in Prysmis
+                const STEP_4_PRYSMIS_OUT = 4100;  // Start Prysmis text fade out (1.5s display)
+                const STEP_5_OVERLAY_DISSOLVE = 4600; // Start the overlay fade-out and scale
+                const STEP_6_CLEANUP = 6300;      // Final cleanup and show main UI
 
-                // 0.1s: Start "Welcome." (Animates in)
+                // 1. Welcome In (0.1s)
                 setTimeout(() => {
                     welcomeText.classList.add('animate-in');
-                }, DELAY); 
+                }, STEP_1_WELCOME_IN); 
 
-                // 1.3s: Start "Welcome." fade-out
+                // 2. Welcome Out (1.6s)
                 setTimeout(() => {
                     welcomeText.classList.remove('animate-in');
                     welcomeText.classList.add('fade-out');
-                }, DELAY + TEXT_IN_DURATION); 
+                }, STEP_2_WELCOME_OUT); 
 
-                // 2.1s: Text swap to "To Prysmis." and start fade-in
+                // 3. Prysmis In (2.6s)
                 setTimeout(() => {
                     welcomeText.textContent = secondText;
                     welcomeText.classList.remove('fade-out');
-                    void welcomeText.offsetWidth; // Force reflow
+                    void welcomeText.offsetWidth; // Force reflow to reset transition
                     welcomeText.classList.add('animate-in');
-                }, DELAY + TEXT_IN_DURATION + TEXT_OUT_DURATION); 
+                }, STEP_3_PRYSMIS_IN); 
 
-                // 3.6s: Start "To Prysmis." fade-out
+                // 4. Prysmis Out (4.1s)
                 setTimeout(() => {
                     welcomeText.classList.remove('animate-in');
                     welcomeText.classList.add('fade-out');
-                }, DELAY + TEXT_IN_DURATION + TEXT_OUT_DURATION + 1500); // 1.5s visibility for second text
+                }, STEP_4_PRYSMIS_OUT); 
 
-                // 4.4s: Start overlay dissolution (fading and subtle scaling)
+                // 5. Start Overlay Dissolution (4.6s)
                 setTimeout(() => {
                     loadingOverlay.style.opacity = '0';
-                    loadingOverlay.style.transform = 'scale(1.02)'; // Subtle 'dust spreading' effect
-                }, DELAY + TEXT_IN_DURATION + TEXT_OUT_DURATION + 1500 + TEXT_OUT_DURATION);
+                    loadingOverlay.style.transform = 'scale(1.03)'; // Subtle 'dust spreading' effect
+                }, STEP_5_OVERLAY_DISSOLVE);
 
-                // 6.1s: Final cleanup and show content
+                // 6. Final Cleanup and Show Content (6.3s)
                 setTimeout(() => {
                     loadingOverlay.style.display = 'none';
                     navbar.style.opacity = '1';
                     mainContent.style.opacity = '1';
-                }, DELAY + TEXT_IN_DURATION + TEXT_OUT_DURATION + 1500 + TEXT_OUT_DURATION + OVERLAY_FADE_DURATION);
+                    mainContent.style.pointerEvents = 'auto'; // Re-enable interaction on main content
+                }, STEP_6_CLEANUP);
             };
 
             // CTA Button Navigation
