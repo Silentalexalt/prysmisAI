@@ -10,8 +10,8 @@
             --purple: #7f00ff;
             --white: #ffffff;
             --light-gray: #ccc;
-            --transition-duration: 0.6s;
-            --animation-duration: 0.4s;
+            --transition-duration: 0.4s;
+            --animation-duration: 0.3s;
         }
 
         * {
@@ -23,7 +23,8 @@
         }
 
         body {
-            background-color: var(--black);
+            /* Subtle radial gradient for visual depth */
+            background: radial-gradient(circle at 10% 20%, rgba(10, 10, 10, 1) 0%, rgba(0, 0, 0, 1) 90%);
             color: var(--white);
             line-height: 1.6;
             overflow-x: hidden;
@@ -49,11 +50,8 @@
             align-items: center;
             z-index: 9999;
             opacity: 1;
-            transition: opacity 1s ease-in-out;
-        }
-
-        #loading-container {
-            transition: transform 1s ease-in-out;
+            /* Transition for the dust spreading effect */
+            transition: opacity 1.5s ease-in-out;
         }
 
         #welcome-text {
@@ -62,40 +60,47 @@
             color: var(--white);
             opacity: 0;
             transform: scale(0.5);
-            transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth cubic animation */
+            /* Smoother cubic animation */
+            transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
             white-space: nowrap;
         }
 
         .text-animation.animate-in {
             opacity: 1;
-            font-size: clamp(2rem, 10vw, 8rem);
+            font-size: clamp(2rem, 12vw, 8rem);
             transform: scale(1);
         }
 
         .text-animation.fade-out {
             opacity: 0;
-            transform: scale(1.1);
+            transform: scale(1.05); /* Slightly smaller scale on fade out */
+            transition: all 0.8s ease-out; /* Faster fade out */
         }
 
         /* --- Main Content and Navbar Initial State --- */
         #navbar, #main-content {
             opacity: 0;
-            transition: opacity 1s var(--transition-duration);
+            transition: opacity 1s ease-in-out;
         }
 
+        /* --- Floating Navbar Style --- */
         #navbar {
             position: fixed;
-            top: 0;
-            width: 100%;
+            top: 2rem; /* Spacing from top edge */
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally */
+            max-width: 1200px; /* Maximum size */
+            width: 90%; /* Floating, smaller width */
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 3rem;
-            background-color: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(10px);
+            padding: 0.75rem 2rem;
+            background-color: rgba(26, 26, 26, 0.9); /* Semi-transparent dark background */
+            backdrop-filter: blur(12px);
             z-index: 50;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: opacity 1s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
         }
 
         .logo {
@@ -104,34 +109,41 @@
             color: var(--white);
         }
 
+        /* Navbar Links and Hover Effect (Purple box, white text) */
         #navbar a {
-            color: var(--light-gray);
+            color: var(--white);
             text-decoration: none;
             font-weight: 500;
-            margin-left: 2rem;
-            transition: color var(--animation-duration), transform var(--animation-duration);
-            padding: 0.5rem 0;
+            margin-left: 1.5rem;
+            padding: 0.5rem 1rem; /* Padding for the hover box */
+            border-radius: 6px;
+            transition: all var(--transition-duration) ease-in-out;
+            white-space: nowrap;
         }
 
         #navbar a:hover {
-            color: var(--purple);
-            transform: translateY(-1px);
+            color: var(--white); /* Ensures text stays white */
+            background-color: var(--purple); /* Purple box highlight */
+            transform: translateY(-2px);
+            box-shadow: 0 2px 10px rgba(127, 0, 255, 0.4);
         }
 
-        /* --- Hero Section --- */
+        /* --- Hero Section (Content on the left) --- */
         #hero-section {
             min-height: 100vh;
             display: flex;
             align-items: center;
-            padding: 0 3rem;
+            justify-content: flex-start; /* Align content to the left */
+            padding: 0 5rem;
         }
 
         .hero-content {
-            padding-top: 60px; /* Offset for fixed navbar */
+            padding-top: 0; /* Navbar is floating, no top offset needed here */
+            max-width: 500px;
         }
 
         .hero-tagline {
-            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-size: clamp(1.8rem, 3.5vw, 3rem);
             font-weight: 300;
             margin-bottom: 2rem;
             color: var(--white);
@@ -146,29 +158,31 @@
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(127, 0, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(127, 0, 255, 0.5);
             transition: background-color var(--animation-duration), transform var(--animation-duration), box-shadow var(--animation-duration);
         }
 
         .cta-button:hover {
             background-color: #9b4dff;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 6px 20px rgba(127, 0, 255, 0.6);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(127, 0, 255, 0.8);
         }
 
         /* --- Features Section --- */
         #features-section {
-            padding: 6rem 3rem;
-            background-color: var(--black);
+            padding: 8rem 5rem;
+            background-color: transparent; /* Let the body background show */
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .section-title {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 600;
-            margin-bottom: 4rem;
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 5rem;
             text-align: center;
             color: var(--purple);
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 10px rgba(127, 0, 255, 0.3);
         }
 
         .down-arrow {
@@ -184,23 +198,23 @@
         }
 
         .feature-box {
-            background-color: #1a1a1a;
+            background-color: #161616;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 12px;
             transition: all var(--transition-duration);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .feature-box:hover {
-            transform: translateY(-8px);
+            transform: translateY(-10px);
             border-color: var(--purple);
-            box-shadow: 0 15px 40px rgba(127, 0, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(127, 0, 255, 0.25);
         }
 
         .feature-box h4 {
             color: var(--purple);
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             margin-bottom: 1.25rem;
             font-weight: 700;
         }
@@ -219,24 +233,36 @@
         .purple-text {
             color: var(--purple);
             font-weight: 600;
-            background: rgba(127, 0, 255, 0.1);
+            background: rgba(127, 0, 255, 0.15);
             padding: 2px 4px;
-            border-radius: 3px;
+            border-radius: 4px;
         }
 
         /* --- Responsive Design --- */
         @media (max-width: 768px) {
             #navbar {
-                padding: 1rem 1.5rem;
+                top: 1rem;
+                width: 95%;
+                padding: 0.75rem 1.25rem;
             }
 
             #navbar nav {
-                display: none; /* Hide navigation links on small screens for cleaner look */
+                display: none;
             }
 
             #hero-section {
-                padding: 0 1.5rem;
+                padding: 0 2rem;
                 text-align: center;
+                justify-content: center; /* Center content on mobile */
+            }
+
+            .hero-tagline {
+                text-align: center;
+            }
+
+            .cta-button {
+                margin: 0 auto;
+                display: block;
             }
 
             .hero-content {
@@ -244,11 +270,11 @@
             }
 
             .section-title {
-                margin-bottom: 2.5rem;
+                margin-bottom: 3rem;
             }
 
             #features-section {
-                padding: 3rem 1.5rem;
+                padding: 4rem 2rem;
             }
         }
     </style>
@@ -264,29 +290,31 @@
             const secondText = "To Prysmis.";
 
             const startAnimation = () => {
-                // Step 1: "Welcome." smooth fade in and scale up (0ms to 3000ms)
+                // Step 1: "Welcome." smooth fade in and scale up (0ms)
                 setTimeout(() => {
                     welcomeText.classList.add('animate-in');
                 }, 100);
 
-                // Step 2: Swap text to "To Prysmis." and start fade out (3000ms)
+                // Step 2: "Welcome." fades out, preparing for text change (1800ms)
                 setTimeout(() => {
                     welcomeText.classList.remove('animate-in');
                     welcomeText.classList.add('fade-out');
                     
-                    // Allow CSS transition to begin fade out before changing text content
+                    // Step 2b: Text swap and new phase start (2600ms)
                     setTimeout(() => {
                         welcomeText.textContent = secondText;
                         welcomeText.classList.remove('fade-out');
-
-                        // Reset and trigger smooth fade in for second text
-                        void welcomeText.offsetWidth; // Force reflow
+                        
+                        // Force reflow/repaint to reset CSS transition for a smooth re-entry
+                        void welcomeText.offsetWidth; 
+                        
+                        // New text smooth fade in
                         welcomeText.classList.add('animate-in');
-                    }, 1000); // 4000ms total
+                    }, 800); 
                     
-                }, 3000);
+                }, 1800);
 
-                // Step 3: Fade out "To Prysmis." and start dissolving overlay (5000ms)
+                // Step 3: "To Prysmis." fades out and dissolves overlay (4400ms)
                 setTimeout(() => {
                     welcomeText.classList.remove('animate-in');
                     welcomeText.classList.add('fade-out');
@@ -294,18 +322,17 @@
                     // Initiate overlay fade out ("dust spreading apart")
                     setTimeout(() => {
                         loadingOverlay.style.opacity = '0';
-                    }, 500); // 5500ms total
-                }, 5000);
+                    }, 500); 
+                }, 4400);
 
-                // Step 4: Final cleanup and show main content/navbar (6500ms)
+                // Step 4: Final cleanup and show main content/navbar (5900ms)
                 setTimeout(() => {
                     loadingOverlay.style.display = 'none';
                     
                     // Show main content and navbar
                     navbar.style.opacity = '1';
                     mainContent.style.opacity = '1';
-                    mainContent.style.pointerEvents = 'auto'; // Re-enable interaction
-                }, 6500);
+                }, 5900);
             };
 
             // CTA Button Navigation
