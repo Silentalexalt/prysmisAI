@@ -50,9 +50,9 @@
             align-items: center;
             z-index: 9999;
             opacity: 1;
-            /* Transition for the dust spreading effect */
+            /* Smooth transition for the final fade-out */
             transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out; 
-            overflow: hidden; /* Important for hiding initial off-screen movement */
+            overflow: hidden; 
         }
         
         #loading-container {
@@ -92,7 +92,7 @@
             width: 80px;
             margin-bottom: 10px; /* Align with logo */
             transform: scaleX(-1); /* Flip horizontally to face left (walking backward) */
-            transition: transform 0.5s ease; /* For smooth turn at the end */
+            transition: transform 0.3s ease, stroke-width 0.3s; /* For smooth turn at the end */
             z-index: 20;
             /* Styling for the stick figure - ENSURING IT IS WHITE */
             stroke: var(--white);
@@ -121,23 +121,15 @@
         @keyframes dragAcross {
             /* Start off screen left */
             0% { transform: translateX(-100vw); }
-            /* Stop position: near center, adjusted to visually stop the text near the center line */
+            /* Stop position: near center */
             100% { transform: translateX(calc(50vw - 250px)); } 
         }
 
-        /* Keyframes for the Logo "Throw" (Arc and Landing) */
+        /* Keyframes for the Logo "Throw" (Arc relative to the start point) */
         @keyframes throwLogo {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
-            30% { transform: translate(0, -150px) scale(1.1) rotate(5deg); opacity: 1; } /* Higher arc, slight scale up */
-            60% { transform: translate(0, -50px) scale(1.05) rotate(-5deg); opacity: 1; } 
-            100% { 
-                /* End position at the true center of the screen */
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%); /* Perfect centering */
-                opacity: 1;
-            }
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(50px, -150px) scale(1.1) rotate(10deg); } /* Arc Up and Forward */
+            100% { transform: translate(150px, -20px) scale(1) rotate(0deg); } /* Lands slightly off from current position */
         }
 
         /* Keyframes for Waving */
@@ -396,11 +388,12 @@
                 
                 const STEP_1_START_DRAG = 100;                      // Start dragging (0.1s)
                 const STEP_2_STOP_WALK = STEP_1_START_DRAG + DRAG_DURATION;    // Stickman reaches center, stops walking (3.6s)
-                const STEP_3_THROW_LOGO = STEP_2_STOP_WALK + 300;           // Start logo throw (3.9s)
-                const STEP_4_WAVE_TURN = STEP_3_THROW_LOGO + THROW_DURATION; // Stickman turns to face user (5.4s)
-                const STEP_5_WAVE_START = STEP_4_WAVE_TURN + 300;           // Start waving (5.7s)
-                const STEP_6_FADE_OUT = STEP_5_WAVE_START + WAVE_DURATION;  // Stop waving, start fade out (6.9s)
-                const STEP_7_CLEANUP = STEP_6_FADE_OUT + FADE_OUT_DURATION; // Final cleanup and show main UI (8.6s)
+                const STEP_3_THROW_LOGO = STEP_2_STOP_WALK + 100;           // Start logo throw (3.7s) - Shortened delay for tighter sync
+                const STEP_4_SNAP_CENTER = STEP_3_THROW_LOGO + THROW_DURATION; // Snap logo to center after throw (5.2s)
+                const STEP_5_WAVE_TURN = STEP_4_SNAP_CENTER + 200;           // Stickman turns to face user (5.4s)
+                const STEP_6_WAVE_START = STEP_5_WAVE_TURN + 300;           // Start waving (5.7s)
+                const STEP_7_FADE_OUT = STEP_6_WAVE_START + WAVE_DURATION;  // Stop waving, start fade out (6.9s)
+                const STEP_8_CLEANUP = STEP_7_FADE_OUT + FADE_OUT_DURATION; // Final cleanup and show main UI (8.6s)
 
                 // Helper to stop walking animations
                 const stopWalk = () => {
@@ -425,52 +418,108 @@
 
                 }, STEP_1_START_DRAG);
 
-                // 2. Stop Walking, Prepare for Throw (3.6s)
+                // 2. Stop Walking, Capture Position (3.6s) - Preparation for the throw
                 setTimeout(() => {
                     stopWalk();
-                    // Slight lean after stopping
-                    stickman.style.transform = 'scaleX(-1) translateX(-5px)'; 
+                    
+                    // Get the logo's current position in the viewport
+                    const rect = logoText.getBoundingClientRect();
+
+                    // Instantly change logo to fixed position at its current spot 
+                    // This is the CRUCIAL fix to stop it jumping when the parent group animation ends.
+                    logoText.style.position = 'fixed';
+                    logoText.style.top = `${rect.top}px`;
+                    logoText.style.left = `${rect.left}px`;
+                    logoText.style.margin = '0'; 
+
                 }, STEP_2_STOP_WALK);
 
-                // 3. Throw Logo (3.9s) - The logo jumps away
+                // 3. Throw Logo (3.7s) - The logo launches from its fixed start point
                 setTimeout(() => {
-                    // Trigger the throw keyframe on the logo
                     logoText.classList.add('anim-throwing');
+                    
+                    // Stickman pushes logo and leans back
+                    stickman.style.transition = 'transform 0.1s ease'; // Quick lean transition
+                    stickman.style.transform = 'scaleX(-1) translateX(10px)'; // Lean back slightly
+                    stickmanArmLeft.style.transform = 'rotate(20deg)'; // Arm pushes forward
+                    stickmanArmLeft.style.transition = 'transform 0.1s ease'; 
+
                 }, STEP_3_THROW_LOGO);
+
+                // 4. Snap Logo to Center (5.2s) - After the throw arc finishes
+                setTimeout(() => {
+                    // Remove the throwing animation class
+                    logoText.classList.remove('anim-throwing');
+                    
+                    // Final position snap (perfect center)
+                    logoText.style.transition = 'transform 0.1s ease-out';
+                    logoText.style.top = '50%';
+                    logoText.style.left = '50%';
+                    logoText.style.transform = 'translate(-50%, -50%)'; 
+                    
+                }, STEP_4_SNAP_CENTER);
                 
-                // 4. Turn to face user (5.4s)
+                // 5. Turn to face user (5.4s)
                 setTimeout(() => {
                     // Turn stickman to face the user (right) smoothly
+                    stickman.style.transition = 'transform 0.3s ease'; // Reset transition to normal
                     stickman.style.transform = 'scaleX(1)'; 
-                }, STEP_4_WAVE_TURN);
+                    stickmanArmLeft.style.transform = 'none'; // Reset left arm
+                }, STEP_5_WAVE_TURN);
 
-                // 5. Start Waving (5.7s)
+                // 6. Start Waving (5.7s)
                 setTimeout(() => {
                     stickmanArmRight.classList.add('anim-waving');
-                }, STEP_5_WAVE_START);
+                }, STEP_6_WAVE_START);
 
-                // 6. Start Fade Out (6.9s)
+                // 7. Start Fade Out (6.9s)
                 setTimeout(() => {
                     stickmanArmRight.classList.remove('anim-waving');
                     
                     loadingOverlay.style.opacity = '0';
                     loadingOverlay.style.transform = 'scale(1.03)';
-                }, STEP_6_FADE_OUT);
+                }, STEP_7_FADE_OUT);
 
 
-                // 7. Final Cleanup and Show Content (8.6s)
+                // 8. Final Cleanup and Show Content (8.6s)
                 setTimeout(() => {
                     loadingOverlay.style.display = 'none';
+                    
+                    // FIX: Ensure Navbar is clickable
                     navbar.style.opacity = '1';
+                    navbar.style.pointerEvents = 'auto'; // Re-enable interaction on navbar
+                    
                     mainContent.style.opacity = '1';
                     mainContent.style.pointerEvents = 'auto'; // Re-enable interaction on main content
-                }, STEP_7_CLEANUP);
+                }, STEP_8_CLEANUP);
             };
 
             // CTA Button Navigation
             ctaButton.addEventListener('click', () => {
-                window.location.href = '/chatarea';
+                window.location.href = '#'; /* Keeping link local for demo */
             });
+            
+            // Allow navbar links to jump to sections after load
+            document.querySelectorAll('#navbar a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (link.getAttribute('href').startsWith('#')) {
+                        // Prevent default scrolling for '#' link which is not implemented
+                        if (link.getAttribute('href') === '#') {
+                             e.preventDefault();
+                             console.log('Docs link clicked!');
+                             return;
+                        }
+                        // For the features link, ensure smooth scroll
+                        e.preventDefault();
+                        const targetId = link.getAttribute('href').substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
+
 
             startAnimation();
         });
@@ -489,7 +538,7 @@
                     <line x1="50" y1="25" x2="50" y2="60"/>
                     <!-- Right Arm (used for waving) -->
                     <line id="stickman-arm-right" class="stickman-limb" x1="50" y1="35" x2="70" y2="45"/>
-                    <!-- Left Arm (dragging) -->
+                    <!-- Left Arm (dragging/pushing) -->
                     <line id="stickman-arm-left" class="stickman-limb" x1="50" y1="35" x2="30" y2="45"/>
                     <!-- Right Leg -->
                     <line id="stickman-leg-right" class="stickman-limb" x1="50" y1="60" x2="60" y2="85"/>
@@ -507,6 +556,7 @@
     <header id="navbar">
         <span class="logo">Prysmis :)</span>
         <nav>
+            <!-- Navbar links now properly target sections and are clickable -->
             <a href="#features-section">features</a>
             <a href="#">Docs</a>
         </nav>
