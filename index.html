@@ -141,11 +141,11 @@ text-shadow: 0 0 20px rgba(127, 0, 255, 0.5);
 60% { transform: translateY(-5px); }
 }
 
-@keyframes priceFlip {
-0% { transform: translateY(0) rotateX(0); opacity: 1; }
-49% { transform: translateY(-20px) rotateX(-90deg); opacity: 0; }
-51% { transform: translateY(20px) rotateX(90deg); opacity: 0; }
-100% { transform: translateY(0) rotateX(0); opacity: 1; }
+@keyframes numberChange {
+0% { transform: translateY(0); opacity: 1; }
+45% { transform: translateY(-20px); opacity: 0; }
+55% { transform: translateY(20px); opacity: 0; }
+100% { transform: translateY(0); opacity: 1; }
 }
 
 #navbar, #main-content {
@@ -194,23 +194,6 @@ padding: 0.5rem 1rem;
 border-radius: 6px;
 transition: all var(--transition-duration) ease-in-out;
 white-space: nowrap;
-position: relative;
-overflow: hidden;
-}
-
-#navbar a::before {
-content: '';
-position: absolute;
-top: 0;
-left: -100%;
-width: 100%;
-height: 100%;
-background: linear-gradient(90deg, transparent, rgba(127, 0, 255, 0.4), transparent);
-transition: left 0.5s;
-}
-
-#navbar a:hover::before {
-left: 100%;
 }
 
 #navbar a:hover {
@@ -456,6 +439,8 @@ position: absolute;
 left: 0;
 color: var(--purple);
 font-weight: bold;
+font-size: 1.2rem;
+text-shadow: 0 0 8px rgba(127, 0, 255, 0.5);
 }
 
 .purple-text {
@@ -509,18 +494,19 @@ transform: translateY(30px);
 animation: slideUp 0.8s ease-out 1.2s both;
 }
 
-.price-flip {
+.price-animation {
 font-size: clamp(3rem, 8vw, 6rem);
 font-weight: 900;
 color: var(--white);
 display: inline-block;
-perspective: 1000px;
+height: 1.2em;
+overflow: hidden;
+position: relative;
 }
 
 .price-digit {
 display: inline-block;
-transform-style: preserve-3d;
-animation: priceFlip 2s ease-in-out infinite;
+animation: numberChange 3s ease-in-out infinite;
 }
 
 .premium-feature-box {
@@ -583,6 +569,25 @@ left: 0;
 color: var(--purple);
 font-weight: bold;
 font-size: 1.2rem;
+text-shadow: 0 0 8px rgba(127, 0, 255, 0.5);
+}
+
+.suggestion-link {
+color: var(--purple);
+font-weight: 600;
+background: rgba(127, 0, 255, 0.15);
+padding: 2px 6px;
+border-radius: 4px;
+text-decoration: none;
+transition: all 0.3s ease;
+text-shadow: 0 0 5px rgba(127, 0, 255, 0.3);
+cursor: pointer;
+}
+
+.suggestion-link:hover {
+background: rgba(127, 0, 255, 0.25);
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(127, 0, 255, 0.3);
 }
 
 footer {
@@ -695,6 +700,7 @@ const mainContent = document.getElementById('main-content');
 const navbar = document.getElementById('navbar');
 const ctaButton = document.querySelector('.cta-button');
 const priceDigit = document.querySelector('.price-digit');
+const suggestionLink = document.querySelector('.suggestion-link');
 
 const cursorLight = document.createElement('div');
 cursorLight.id = 'cursor-light';
@@ -753,21 +759,16 @@ navbar.classList.remove('scrolled');
 
 function startPriceAnimation() {
 let currentPrice = 0;
-const targetPrice = 10;
-let isAnimating = false;
+const prices = ['$0', '$10'];
+let currentIndex = 0;
 
-function animatePrice() {
-if (isAnimating) return;
-isAnimating = true;
-
-setTimeout(() => {
-priceDigit.textContent = `$${targetPrice}`;
-isAnimating = false;
-}, 1000);
+function updatePrice() {
+currentIndex = (currentIndex + 1) % prices.length;
+priceDigit.textContent = prices[currentIndex];
 }
 
-animatePrice();
-setInterval(animatePrice, 4000);
+updatePrice();
+setInterval(updatePrice, 3000);
 }
 
 const startAnimation = () => {
@@ -789,6 +790,10 @@ startPriceAnimation();
 
 ctaButton.addEventListener('click', () => {
 window.location.href = '#';
+});
+
+suggestionLink.addEventListener('click', () => {
+window.open('https://docs.google.com/forms/d/e/1FAIpQLScsMOrIFbCKTAVvXHz0IMVBZwuF0VBdUp1KV2WLs3tdKidv2w/viewform?usp=header', '_blank');
 });
 
 document.querySelectorAll('#navbar a').forEach(link => {
@@ -874,7 +879,7 @@ Expect the speed from
 <section id="premium-section">
 <h3 class="premium-title">Prysmis AI Premium:</h3>
 <div class="price-container">
-<div class="price-flip">
+<div class="price-animation">
 <span class="price-digit">$0</span>
 </div>
 </div>
@@ -885,7 +890,7 @@ Expect the speed from
 <li>Able to view website external domains</li>
 <li>Able to analysis YouTube videos accurately (with a YouTube domain link provided)</li>
 <li>Unlock the ability to change AI models with a single click</li>
-<li>More coming soon. Suggest me some?</li>
+<li>More coming soon. <span class="suggestion-link">Suggest me some?</span></li>
 </ul>
 </div>
 </section>
