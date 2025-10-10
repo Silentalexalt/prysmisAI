@@ -8,6 +8,62 @@ body, html {
     overflow: hidden;
 }
 
+.invite-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.invite-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.invite-ui {
+    background-color: #1e1e1e;
+    padding: 30px 40px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #333;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.invite-ui h2 {
+    margin: 0 0 20px 0;
+    color: #f0f0f0;
+    font-weight: 500;
+}
+
+#inviteCodeInput {
+    background-color: #2c2c2c;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 16px;
+    padding: 12px;
+    width: 250px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#inviteCodeInput:focus {
+    border-color: #6a4acd;
+    box-shadow: 0 0 0 3px rgba(106, 74, 205, 0.3);
+}
+
+
 body {
     display: flex;
 }
@@ -162,6 +218,7 @@ body {
     align-items: center;
     opacity: 0;
     transition: opacity 0.3s ease;
+    z-index: 100;
 }
 
 .settings-ui-overlay.visible {
@@ -290,4 +347,17 @@ input:checked + .slider:before {
 }
 
 .save-settings-btn {
-    p
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffffff;
+    color: #121212;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
