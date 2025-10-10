@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const inviteOverlay = document.getElementById('invite-overlay');
+    const inviteCodeInput = document.getElementById('inviteCodeInput');
     const userInput = document.getElementById('userInput');
     const commandSuggestions = document.querySelector('.command-suggestions');
     const settingsIcon = document.querySelector('.settings-icon');
@@ -7,7 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsTabs = document.querySelectorAll('.settings-tab');
     const settingsPages = document.querySelectorAll('.settings-page');
 
+    const inviteCode = "prysmisfromowner$";
     let commandActive = false;
+
+    inviteCodeInput.focus();
+
+    inviteCodeInput.addEventListener('input', () => {
+        if (inviteCodeInput.value === inviteCode) {
+            inviteOverlay.classList.remove('visible');
+        }
+    });
+
 
     userInput.addEventListener('input', () => {
         if (userInput.value === '/') {
